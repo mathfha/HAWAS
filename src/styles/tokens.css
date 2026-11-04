@@ -1,0 +1,15 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  --paper: #f7f4ec;
+  --ink: #172a3a;
+  --blue: #315c8c;
+  --green: #39715b;
+  --vermilion: #a9432c;
+  --line: #d7d2c7;
+  --muted: #52616b;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}

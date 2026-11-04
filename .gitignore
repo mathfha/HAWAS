@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Production build
+dist/
+build/
+
+# Environment and sensitive keys
+.env
+.env.*
+*.env
+*.local
+
+# IDE, editor, and AI assistant configs
+.vscode/
+.idea/
+.gemini/
+.claude/
+.antigravity/
+
+# Vibe coding drafts, prompt dumps, and scratchpads
+hawas.md
+prd-hawas.md
+prototipe-hawas.md
+scratch/
+*.log
+*.tmp
+transcript*.jsonl
+
+# Operating System files
+.DS_Store
+Thumbs.db
