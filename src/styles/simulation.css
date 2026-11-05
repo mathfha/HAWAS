@@ -258,6 +258,252 @@
   font-size: 0.88rem;
 }
 
+/* WhatsApp-like colors are confined to this clearly labeled fictional training mockup. */
+.whatsapp-mockup {
+  width: min(100%, 30rem);
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.whatsapp-mockup__notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.7rem;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.whatsapp-chat {
+  --chat-header: #075e54;
+  --chat-header-detail: #128c7e;
+  --chat-incoming: #fff;
+  --chat-outgoing: #dcf8c6;
+  --chat-wall: #efe7dc;
+  overflow: hidden;
+  background: var(--chat-wall);
+}
+
+.whatsapp-statusbar {
+  min-height: 1.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.1rem 0.85rem;
+  background: var(--chat-header);
+  color: white;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.whatsapp-statusbar__icons {
+  letter-spacing: 0.08em;
+}
+
+.whatsapp-header {
+  min-height: 3.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.7rem;
+  background: var(--chat-header);
+  color: white;
+}
+
+.whatsapp-header__back {
+  width: 1.3rem;
+  color: white;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.whatsapp-avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #d7ddd9;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.whatsapp-header__contact {
+  min-width: 0;
+  display: grid;
+  line-height: 1.25;
+}
+
+.whatsapp-header__contact strong {
+  overflow: hidden;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.whatsapp-header__contact small {
+  color: rgb(255 255 255 / 84%);
+  font-size: 0.72rem;
+}
+
+.whatsapp-header__actions {
+  margin-left: auto;
+  color: white;
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+}
+
+.whatsapp-date {
+  display: flex;
+  justify-content: center;
+  padding: 0.8rem 0.5rem 0.45rem;
+}
+
+.whatsapp-date span {
+  padding: 0.18rem 0.5rem;
+  background: #fff8df;
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.whatsapp-thread {
+  min-height: 14rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.2rem 0.75rem 1rem;
+  background-color: var(--chat-wall);
+  background-image:
+    radial-gradient(ellipse at 18% 22%, rgb(23 42 58 / 3%) 0 1px, transparent 2px),
+    radial-gradient(ellipse at 76% 68%, rgb(23 42 58 / 3%) 0 1px, transparent 2px);
+  background-size: 30px 34px, 42px 38px;
+}
+
+.whatsapp-encryption {
+  max-width: 19rem;
+  align-self: center;
+  margin: 0.2rem 0 0.25rem;
+  padding: 0.4rem 0.55rem;
+  background: #fff8df;
+  color: #675f48;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.whatsapp-bubble {
+  max-width: min(90%, 22rem);
+  position: relative;
+  padding: 0.55rem 0.65rem 0.3rem;
+  border: 1px solid rgb(23 42 58 / 5%);
+  background: var(--chat-incoming);
+  color: #202a30;
+  box-shadow: 0 1px 1px rgb(23 42 58 / 10%);
+  overflow-wrap: anywhere;
+}
+
+.whatsapp-bubble p {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.whatsapp-bubble time {
+  display: block;
+  color: #65756e;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-align: right;
+}
+
+.whatsapp-bubble--attachment {
+  width: min(90%, 20rem);
+  padding: 0.35rem;
+}
+
+.whatsapp-file {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem;
+  background: #f1f3f4;
+}
+
+.whatsapp-file__icon {
+  width: 2.4rem;
+  height: 2.8rem;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  background: #e4e9ec;
+  color: var(--vermilion);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.whatsapp-file__details {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.whatsapp-file__details strong {
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.whatsapp-file__details small {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.whatsapp-composer {
+  min-height: 3.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.6rem;
+  background: #f0f0f0;
+}
+
+.whatsapp-composer__field {
+  min-height: 2.2rem;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  padding-inline: 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 1.2rem;
+  background: white;
+  color: #69747a;
+  font-size: 0.8rem;
+}
+
+.whatsapp-composer__mic {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--chat-header-detail);
+  color: white;
+  font-size: 0.65rem;
+}
+
 .simulation-decision h2 {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
@@ -272,61 +518,138 @@
 
 .simulation-choices {
   display: grid;
-  gap: 0.85rem;
+  gap: 1.15rem;
 }
 
 .simulation-choice {
-  min-height: 4.5rem;
+  min-height: 5.5rem;
   display: grid;
-  align-content: center;
-  gap: 0.35rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--line);
+  gap: 0.6rem;
+  padding: 1.15rem 1.25rem;
+  border: 2px solid var(--line);
+  border-radius: 12px;
   background: white;
   color: var(--ink);
-  font: inherit;
+  font-family: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  box-shadow: 0 4px 0 #d7d2c7;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.15s ease, background-color 0.15s ease;
+  position: relative;
 }
 
 .simulation-choice--safe {
-  border-left: 5px solid var(--green);
+  border-left: 8px solid var(--green);
+}
+
+.simulation-choice--safe:hover {
+  border-color: var(--green);
+  box-shadow: 0 6px 0 #2b5544;
+  transform: translateY(-2px);
+  background: #fcfefd;
+}
+
+.simulation-choice--safe:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #2b5544;
 }
 
 .simulation-choice--risky {
-  border-left: 5px solid var(--vermilion);
+  border-left: 8px solid var(--vermilion);
+}
+
+.simulation-choice--risky:hover {
+  border-color: var(--vermilion);
+  box-shadow: 0 6px 0 #7d3120;
+  transform: translateY(-2px);
+  background: #fdfcfb;
+}
+
+.simulation-choice--risky:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #7d3120;
+}
+
+.simulation-choice__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .simulation-choice__tag {
   display: inline-block;
   width: fit-content;
-  padding: 0.15rem 0.45rem;
-  font-family: var(--mono);
-  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.76rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .simulation-choice__tag--safe {
-  background: rgb(57 113 91 / 12%);
-  color: var(--green);
+  background: rgb(57 113 91 / 14%);
+  color: #275240;
 }
 
 .simulation-choice__tag--risky {
-  background: rgb(169 67 44 / 12%);
-  color: var(--vermilion);
+  background: rgb(169 67 44 / 14%);
+  color: #8c321d;
 }
 
 .simulation-choice__label {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.4;
+  color: var(--ink);
 }
 
-.simulation-choice:hover {
-  background: rgb(23 42 58 / 4%);
+.simulation-choice__footer {
+  margin-top: 0.35rem;
+  display: flex;
+  align-items: center;
+}
+
+.simulation-choice__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: rgb(49 92 140 / 10%);
+  color: var(--blue);
+  border: 1px solid rgb(49 92 140 / 25%);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.simulation-choice--safe .simulation-choice__cta {
+  background: rgb(57 113 91 / 12%);
+  color: var(--green);
+  border-color: rgb(57 113 91 / 30%);
+}
+
+.simulation-choice--risky .simulation-choice__cta {
+  background: rgb(169 67 44 / 12%);
+  color: var(--vermilion);
+  border-color: rgb(169 67 44 / 30%);
+}
+
+.simulation-choice:hover .simulation-choice__cta {
+  background: var(--blue);
+  color: white;
+}
+
+.simulation-choice--safe:hover .simulation-choice__cta {
+  background: var(--green);
+  color: white;
+}
+
+.simulation-choice--risky:hover .simulation-choice__cta {
+  background: var(--vermilion);
+  color: white;
 }
 
 .simulation-feedback {
@@ -496,19 +819,7 @@
 }
 
 .simulation-exit {
-  background: transparent;
-  border: 0;
-  padding: 0.5rem 0;
-  color: var(--muted);
-  font: inherit;
-  font-size: 0.88rem;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  cursor: pointer;
-}
-
-.simulation-exit:hover {
-  color: var(--ink);
+  font-size: 0.95rem;
 }
 
 @media (min-width: 760px) {
@@ -535,5 +846,461 @@
 
   .simulation-progress__title {
     font-size: 0.7rem;
+  }
+}
+
+
+/* ==========================================================================
+   Karakter Pemandu Warga (Pak RT) & Banner Komunikasi
+   ========================================================================== */
+
+.mascot-intro-banner,
+.mascot-feedback-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--line);
+  background: white;
+}
+
+.mascot-intro-bubble,
+.mascot-feedback-bubble {
+  flex: 1;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.mascot-intro-bubble strong,
+.mascot-feedback-bubble strong {
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.mascot-intro-bubble p,
+.mascot-feedback-bubble p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.mascot-feedback-banner--safe {
+  border-left: 4px solid var(--green);
+  background: rgb(57 113 91 / 4%);
+}
+
+.mascot-feedback-banner--safe .mascot-feedback-bubble strong {
+  color: var(--green);
+}
+
+.mascot-feedback-banner--alert {
+  border-left: 4px solid var(--vermilion);
+  background: rgb(169 67 44 / 4%);
+}
+
+.mascot-feedback-banner--alert .mascot-feedback-bubble strong {
+  color: var(--vermilion);
+}
+
+.mascot-svg {
+  flex: 0 0 75px;
+  width: 75px;
+  height: 75px;
+}
+
+/* Callout Kotak Tanda Bahaya & Perhatian */
+.fictional-callout {
+  margin-top: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.fictional-callout--hazard {
+  border: 1px solid var(--vermilion);
+  background: #fff3f0;
+  color: #7d2613;
+}
+
+.fictional-callout--warning {
+  border: 1px solid #c97d10;
+  background: #fdf8ee;
+  color: #633e08;
+}
+
+.whatsapp-file__icon-wrap {
+  flex: 0 0 auto;
+}
+
+/* ==========================================================================
+   Mockup Kamera Pemindai QRIS (Skenario 2)
+   ========================================================================== */
+
+.qris-mockup {
+  width: min(100%, 30rem);
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.qris-screen {
+  padding: 0 0 1.25rem;
+  background: #fdfbf7;
+}
+
+.qris-statusbar {
+  min-height: 1.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.1rem 0.85rem;
+  background: var(--ink);
+  color: white;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.qris-physical-sign {
+  margin: 1rem 1rem 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px dashed #b8860b;
+  background: #fffdf5;
+  text-align: center;
+}
+
+.qris-physical-sign__badge {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #855b00;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.qris-physical-sign__title {
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.qris-viewfinder-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f0ede4;
+  border-block: 1px solid var(--line);
+}
+
+.qris-viewfinder-lens {
+  width: 5rem;
+  height: 5rem;
+  display: grid;
+  place-items: center;
+}
+
+.qris-viewfinder-caption {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.qris-confirmation-card {
+  margin: 1rem 1rem 0.5rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  background: white;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.qris-confirmation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.88rem;
+}
+
+.qris-confirmation-row--highlight {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--vermilion);
+  background: rgb(169 67 44 / 5%);
+}
+
+.qris-confirmation-label {
+  color: var(--muted);
+}
+
+.qris-confirmation-amount {
+  font-family: var(--mono);
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+
+.qris-confirmation-recipient {
+  font-size: 0.95rem;
+  color: var(--vermilion);
+}
+
+.qris-screen .fictional-callout {
+  margin: 0.75rem 1rem 0;
+}
+
+/* ==========================================================================
+   Mockup Layar Panggilan Masuk (Skenario 3)
+   ========================================================================== */
+
+.call-mockup {
+  width: min(100%, 30rem);
+  border: 1px solid var(--line);
+  background: #111a24;
+  color: #f7f4ec;
+}
+
+.call-mockup .fictional-phone__header {
+  background: #090e14;
+  border-bottom: 1px solid #233446;
+}
+
+.call-mockup .fictional-phone__status {
+  color: #92a4b8;
+}
+
+.call-screen {
+  padding: 0 0 1.5rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.call-statusbar {
+  min-height: 1.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.1rem 0.85rem;
+  background: #090e14;
+  color: #92a4b8;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.call-ringing-wrapper {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.35rem;
+  padding-inline: 1rem;
+}
+
+.call-avatar-ring {
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.4rem;
+  animation: phone-ring 1.8s infinite;
+}
+
+.call-status-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  background: rgb(169 67 44 / 30%);
+  color: #ff9d85;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.call-caller-name {
+  margin: 0.2rem 0 0;
+  font-size: 1.35rem;
+  color: #ffffff;
+}
+
+.call-caller-number {
+  font-family: var(--mono);
+  font-size: 0.88rem;
+  color: #b0c4de;
+}
+
+.call-caller-note {
+  font-size: 0.75rem;
+  color: #ff9d85;
+}
+
+.call-speech-bubble {
+  margin-inline: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #334d66;
+  background: #182533;
+  color: #e6eef5;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.call-speech-bubble strong {
+  display: block;
+  color: #ff9d85;
+  margin-bottom: 0.25rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.call-speech-bubble p {
+  margin: 0;
+}
+
+.call-button-preview {
+  display: flex;
+  justify-content: space-around;
+  padding-inline: 2rem;
+  margin-top: 0.5rem;
+}
+
+.call-fake-btn {
+  display: grid;
+  justify-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #92a4b8;
+}
+
+.call-fake-btn span {
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.call-fake-btn--decline span {
+  background: var(--vermilion);
+}
+
+.call-fake-btn--answer span {
+  background: var(--green);
+}
+
+/* ==========================================================================
+   Animasi Mikro & Stamp Penilaian
+   ========================================================================== */
+
+.simulation-stamp--animated {
+  animation: stamp-press 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.simulation-stamp--safe {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgb(57 113 91 / 10%);
+}
+
+.simulation-stamp--risky {
+  color: var(--vermilion);
+  border-color: var(--vermilion);
+  background: rgb(169 67 44 / 10%);
+}
+
+@keyframes stamp-press {
+  0% {
+    transform: scale(1.35) rotate(-6deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(-2deg);
+    opacity: 1;
+  }
+}
+
+@keyframes phone-ring {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  10%, 30% {
+    transform: rotate(-8deg) scale(1.05);
+  }
+  20%, 40% {
+    transform: rotate(8deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .call-avatar-ring,
+  .simulation-stamp--animated {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* ==========================================================================
+   Ilustrasi Karakter Bitmap (Gambar Orang Nyata, Bukan Anime)
+   ========================================================================== */
+
+.mascot-img {
+  flex: 0 0 90px;
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid var(--line);
+}
+
+.scenario-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.scenario-img--wide {
+  width: 100%;
+}
+
+.scenario-illustration-hint {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  margin-top: 0.75rem;
+  border: 1px dashed var(--line);
+  background: rgb(49 92 140 / 3%);
+}
+
+.scenario-illustration-hint--wide .scenario-img {
+  width: 100%;
+}
+
+.scenario-illustration-caption {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--muted);
+  text-align: center;
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .mascot-img {
+    flex: 0 0 70px;
+    width: 70px;
+    height: 70px;
+  }
+
+  .mascot-intro-banner,
+  .mascot-feedback-banner {
+    gap: 0.85rem;
+    padding: 0.75rem;
   }
 }

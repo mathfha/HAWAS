@@ -8,6 +8,7 @@ import {
 } from "../features/simulation/model";
 import { renderSimulation } from "../features/simulation/view";
 import { sosContent } from "../content/sos";
+import { mascotIllustrations } from "../content/illustrations";
 
 const pageCopy: Record<RouteId, { title: string; description: string }> = {
   home: {
@@ -46,17 +47,26 @@ const pageCopy: Record<RouteId, { title: string; description: string }> = {
   },
 };
 
+const navIcons: Record<string, string> = {
+  home: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5L12 3l9 6.5V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9.5z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+  simulation: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"/></svg>`,
+  check: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>`,
+  qris: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/></svg>`,
+  learn: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg>`,
+  sos: `<svg class="nav-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="0.75" fill="currentColor"/></svg>`,
+};
+
 function renderNavigation(activeRoute: RouteId): string {
   return routes
     .map(
       (route) => `
         <a
-          class="nav-link${route.id === activeRoute ? " nav-link--active" : ""}"
+          class="nav-link${route.id === activeRoute ? " nav-link--active" : ""}${route.id === "sos" ? " nav-link--sos" : ""}"
           href="${route.href}"
           ${route.id === activeRoute ? 'aria-current="page"' : ""}
         >
-          ${route.label}
-          ${route.id === "sos" ? '<span class="nav-link__mark" aria-hidden="true">!</span>' : ""}
+          ${navIcons[route.id] || ""}
+          <span class="nav-link__label">${route.label}</span>
         </a>
       `,
     )
@@ -65,6 +75,14 @@ function renderNavigation(activeRoute: RouteId): string {
 
 function renderHome(): string {
   return `
+    <div class="mascot-intro-banner">
+      ${mascotIllustrations.intro}
+      <div class="mascot-intro-bubble">
+        <strong>Halo! Saya Pak RT, pemandu warga.</strong>
+        <p>Saya akan membantu Anda belajar mengenali jebakan penipuan digital lewat latihan aman di ponsel.</p>
+      </div>
+    </div>
+
     <p class="eyebrow">Panduan keamanan transaksi digital masyarakat</p>
     <h1 id="page-title" tabindex="-1">Hati-hati dan Awas Bertransaksi (HAWAS)</h1>
     <p class="lead">Media belajar mandiri untuk melatih kewaspadaan saat bertransaksi di ponsel. Tanpa memakai uang sungguhan, tanpa mendaftar akun, dan tanpa meminta data pribadi Anda.</p>
@@ -277,12 +295,13 @@ export function mountApp(root: HTMLElement): void {
       <a class="skip-link" href="#main-content">Lewati langsung ke konten utama</a>
       <div class="app-shell">
         <header class="site-header">
-          <a class="wordmark" href="#/" aria-label="HAWAS, Beranda Utama">HAWAS</a>
-          <span class="header-caption">Hati-hati dan Awas Bertransaksi</span>
-          <a class="sos-shortcut" href="#/sos" aria-label="Buka panduan darurat Bantuan SOS">Bantuan SOS</a>
+          <div class="site-header__top">
+            <a class="wordmark" href="#/" aria-label="HAWAS, Beranda Utama">HAWAS</a>
+            <span class="header-caption">Hati-hati dan Awas Bertransaksi</span>
+          </div>
+          <nav class="site-nav" aria-label="Navigasi menu utama">${renderNavigation(activeRoute)}</nav>
         </header>
         <div class="page-layout">
-          <nav class="site-nav" aria-label="Navigasi menu utama">${renderNavigation(activeRoute)}</nav>
           <main id="main-content" class="main-content" tabindex="-1">
             ${renderPage(activeRoute, simulationState)}
           </main>

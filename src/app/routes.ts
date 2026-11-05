@@ -1,10 +1,10 @@
 export const routes = [
   { id: "home", label: "Beranda", href: "#/" },
-  { id: "simulation", label: "Latihan Simulasi", href: "#/simulasi" },
-  { id: "check", label: "Cek Pesan", href: "#/cek" },
-  { id: "qris", label: "Periksa QRIS", href: "#/qris" },
-  { id: "sos", label: "Bantuan SOS", href: "#/sos" },
-  { id: "learn", label: "Panduan Belajar", href: "#/belajar" },
+  { id: "simulation", label: "Simulasi", href: "#/simulasi" },
+  { id: "check", label: "Cek", href: "#/cek" },
+  { id: "qris", label: "QRIS", href: "#/qris" },
+  { id: "learn", label: "Belajar", href: "#/belajar" },
+  { id: "sos", label: "SOS", href: "#/sos" },
 ] as const;
 
 export type RouteId = (typeof routes)[number]["id"] | "not-found";

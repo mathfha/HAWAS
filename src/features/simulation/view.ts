@@ -1,5 +1,10 @@
 import { scenarios } from "../../content/scenarios";
 import {
+  mascotIllustrations,
+  scenarioImages,
+  scenarioVisuals,
+} from "../../content/illustrations";
+import {
   initialFictionalBalance,
   type SimulationState,
 } from "./model";
@@ -23,6 +28,14 @@ function renderBalance(balance: number): string {
 function renderIntro(): string {
   return `
     <section class="simulation-intro" aria-labelledby="page-title">
+      <div class="mascot-intro-banner">
+        ${mascotIllustrations.intro}
+        <div class="mascot-intro-bubble">
+          <strong>Halo! Saya Pak RT, pemandu warga.</strong>
+          <p>Mari kita berlatih mengenali tanda-tanda jebakan penipuan di ponsel lewat simulasi layar nyata di bawah ini.</p>
+        </div>
+      </div>
+
       <p class="eyebrow">Simulasi transaksi digital / 3 contoh situasi</p>
       <h1 id="page-title" tabindex="-1">Latihan Mengenali Situasi Mencurigakan</h1>
       <p class="lead">Pelajari cara mengambil keputusan yang aman saat bertransaksi di dunia digital. Latihan ini menggunakan situasi tiruan agar Anda terbiasa memeriksa sebelum bertindak.</p>
@@ -74,11 +87,15 @@ function renderProgress(state: SimulationState): string {
           .map((scenario, index) => {
             const current = index === state.scenarioIndex;
             const completed = index < state.scenarioIndex;
+            const status = completed ? "Selesai" : current ? "Sedang aktif" : "Menunggu";
             return `
-              <li ${current ? 'aria-current="step"' : ""} class="${completed ? "is-complete" : ""}">
+              <li
+                ${current ? 'aria-current="step"' : ""}
+                class="${completed ? "is-complete" : ""}"
+                aria-label="Situasi ${index + 1}: ${scenario.title}, ${status}"
+              >
                 <span class="step-number">${String(index + 1).padStart(2, "0")}</span>
-                <span class="simulation-progress__title">${scenario.title}</span>
-                <span class="simulation-progress__state">${completed ? "Selesai" : current ? "Sedang aktif" : "Menunggu"}</span>
+                <span class="simulation-progress__state">${status}</span>
               </li>
             `;
           })
@@ -91,25 +108,157 @@ function renderProgress(state: SimulationState): string {
 function renderPhone(state: SimulationState): string {
   const scenario = scenarios[state.scenarioIndex];
 
-  return `
-    <section class="fictional-phone" aria-label="Contoh tampilan layar ponsel fiktif">
-      <header class="fictional-phone__header">
-        <span class="simulation-stamp">CONTOH SIMULASI</span>
-        <span class="fictional-phone__status">Ini adalah contoh tampilan, bukan aplikasi asli</span>
-      </header>
-      <div class="fictional-phone__content">
-        <p class="fictional-phone__context">${scenario.context}</p>
-        <div class="fictional-messages">
-          ${scenario.messages
-            .map(
-              (message) => `
-                <div class="fictional-message${"kind" in message ? " fictional-message--file" : ""}">
-                  <span class="fictional-message__sender">${message.sender}</span>
-                  <span class="fictional-message__body">${message.text}</span>
+  // Skenario 1: Pesan Kurir Berkas APK
+  if (scenario.id === "courier-apk") {
+    return `
+      <section class="fictional-phone whatsapp-mockup" aria-label="Contoh tampilan chat WhatsApp fiktif">
+        <div class="whatsapp-mockup__notice">
+          <span class="simulation-stamp">SIMULASI HAWAS</span>
+          <span>Contoh tampilan WhatsApp fiktif.</span>
+        </div>
+        <div class="whatsapp-chat">
+          <div class="whatsapp-statusbar" aria-hidden="true">
+            <span>09.41</span>
+            <span class="whatsapp-statusbar__icons">●●● 4G 98%</span>
+          </div>
+          <header class="whatsapp-header">
+            <span class="whatsapp-header__back" aria-hidden="true">‹</span>
+            <span class="whatsapp-avatar" aria-hidden="true">K</span>
+            <span class="whatsapp-header__contact">
+              <strong>Kurir Paket (Nomor Tak Dikenal)</strong>
+              <small>Online</small>
+            </span>
+            <span class="whatsapp-header__actions" aria-hidden="true">⋮</span>
+          </header>
+          <div class="whatsapp-date"><span>HARI INI</span></div>
+          <div class="whatsapp-thread">
+            <p class="whatsapp-encryption">Pesan dan berkas di layar ini hanyalah simulasi edukasi.</p>
+            <div class="whatsapp-bubble whatsapp-bubble--incoming">
+              <p>Paket Anda tertahan di gudang. Silakan buka foto tanda terima paket di bawah ini:</p>
+              <time>09.40</time>
+            </div>
+            <div class="whatsapp-bubble whatsapp-bubble--incoming whatsapp-bubble--attachment">
+              <div class="whatsapp-file">
+                <div class="whatsapp-file__icon-wrap">
+                  ${scenarioVisuals.apkBadge}
                 </div>
-              `,
-            )
-            .join("")}
+                <div class="whatsapp-file__details">
+                  <strong>Foto_Paket.apk</strong>
+                  <small>4.2 MB • Berkas Aplikasi Android</small>
+                </div>
+              </div>
+              <time>09.40</time>
+            </div>
+            <div class="fictional-callout fictional-callout--hazard" role="note">
+              <strong>Tanda Bahaya:</strong> Berkas berakhiran <code>.apk</code> adalah aplikasi ponsel, bukan berkas foto!
+            </div>
+          </div>
+          <div class="scenario-illustration-hint">
+            ${scenarioImages.ibuCermat}
+            <p class="scenario-illustration-caption">Ibu Cermat selalu waspada memeriksa ponselnya sebelum bertindak.</p>
+          </div>
+          <div class="whatsapp-composer" aria-hidden="true">
+            <span class="whatsapp-composer__field">Ketik pesan...</span>
+            <span class="whatsapp-composer__mic">🎤</span>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // Skenario 2: Periksa Nama Merchant QRIS di Toko
+  if (scenario.id === "merchant-name") {
+    return `
+      <section class="fictional-phone qris-mockup" aria-label="Contoh tampilan pemindaian kode QRIS fiktif">
+        <div class="fictional-phone__header">
+          <span class="simulation-stamp">SIMULASI HAWAS</span>
+          <span class="fictional-phone__status">Kamera Pemindai QRIS Ponsel</span>
+        </div>
+        <div class="qris-screen">
+          <div class="qris-statusbar" aria-hidden="true">
+            <span>09.42</span>
+            <span class="qris-statusbar__icons">●●● 4G 92%</span>
+          </div>
+
+          <!-- Spanduk Fisik Toko Tempat Berdiri -->
+          <div class="qris-physical-sign">
+            <div class="qris-physical-sign__badge">Papan Nama Toko Fisik di Depan Kasir:</div>
+            <strong class="qris-physical-sign__title">Kopi Berkah</strong>
+          </div>
+
+          <!-- Jendela Bidik Kamera -->
+          <div class="qris-viewfinder-card">
+            <div class="qris-viewfinder-lens">
+              ${scenarioVisuals.qrisViewfinder}
+            </div>
+            <p class="qris-viewfinder-caption">Kode QR berhasil dipindai oleh kamera</p>
+          </div>
+
+          <!-- Konfirmasi Pembayaran di Layar HP -->
+          <div class="qris-confirmation-card">
+            <div class="qris-confirmation-row">
+              <span class="qris-confirmation-label">Total Tagihan:</span>
+              <strong class="qris-confirmation-amount">Rp25.000</strong>
+            </div>
+            <div class="qris-confirmation-row qris-confirmation-row--highlight">
+              <span class="qris-confirmation-label">Nama Penerima (Merchant):</span>
+              <strong class="qris-confirmation-recipient">Resto Sukses Pribadi</strong>
+            </div>
+          </div>
+
+          <div class="fictional-callout fictional-callout--warning" role="note">
+            <strong>Perhatian:</strong> Nama penerima di layar (Resto Sukses Pribadi) berbeda dari nama toko (Kopi Berkah)!
+          </div>
+          <div class="scenario-illustration-hint scenario-illustration-hint--wide">
+            ${scenarioImages.cekQris}
+            <p class="scenario-illustration-caption">Selalu cocokkan nama merchant di layar ponsel dengan nama toko tempat Anda berdiri.</p>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // Skenario 3: Panggilan Telepon Minta OTP
+  return `
+    <section class="fictional-phone call-mockup" aria-label="Contoh tampilan panggilan telepon masuk fiktif">
+      <div class="fictional-phone__header">
+        <span class="simulation-stamp">SIMULASI HAWAS</span>
+        <span class="fictional-phone__status">Layar Panggilan Masuk Ponsel</span>
+      </div>
+      <div class="call-screen">
+        <div class="call-statusbar" aria-hidden="true">
+          <span>09.43</span>
+          <span class="call-statusbar__icons">●●● 4G 85%</span>
+        </div>
+
+        <div class="call-ringing-wrapper">
+          <div class="call-avatar-ring">
+            ${scenarioVisuals.callRinging}
+          </div>
+          <span class="call-status-badge">Panggilan Telepon Masuk...</span>
+          <h2 class="call-caller-name">Pusat Bantuan Bank</h2>
+          <span class="call-caller-number">+62 821-4455-8899</span>
+          <small class="call-caller-note">(Nomor ponsel seluler biasa, bukan nomor hotline resmi bank)</small>
+        </div>
+
+        <div class="call-speech-bubble" role="note">
+          <strong>Suara Penelepon Mendesak:</strong>
+          <p>"Akun rekening Anda sedang dibobol! Segera bacakan 6 digit kode rahasia (OTP) dari SMS yang baru saja kami kirimkan agar saldo Anda selamat!"</p>
+        </div>
+
+        <div class="call-button-preview" aria-hidden="true">
+          <div class="call-fake-btn call-fake-btn--decline">
+            <span>✕</span>
+            <small>Tolak</small>
+          </div>
+          <div class="call-fake-btn call-fake-btn--answer">
+            <span>✆</span>
+            <small>Terima</small>
+          </div>
+        </div>
+        <div class="scenario-illustration-hint">
+          ${scenarioImages.tolakTelepon}
+          <p class="scenario-illustration-caption">Tekan tombol merah untuk menolak panggilan dari nomor tak dikenal.</p>
         </div>
       </div>
     </section>
@@ -140,10 +289,15 @@ function renderQuestion(state: SimulationState): string {
                   data-simulation-action="choose"
                   data-safety="${choice.safety}"
                 >
-                  <span class="simulation-choice__tag ${choice.safety === "safe" ? "simulation-choice__tag--safe" : "simulation-choice__tag--risky"}">
-                    ${choice.safety === "safe" ? "Langkah yang lebih aman" : "Tindakan berisiko tinggi"}
-                  </span>
+                  <div class="simulation-choice__header">
+                    <span class="simulation-choice__tag ${choice.safety === "safe" ? "simulation-choice__tag--safe" : "simulation-choice__tag--risky"}">
+                      ${choice.safety === "safe" ? "Langkah yang lebih aman" : "Tindakan berisiko tinggi"}
+                    </span>
+                  </div>
                   <span class="simulation-choice__label">${choice.label}</span>
+                  <div class="simulation-choice__footer">
+                    <span class="simulation-choice__cta">Tekan untuk Memilih</span>
+                  </div>
                 </button>
               `,
             )
@@ -192,14 +346,23 @@ function renderFeedback(state: SimulationState): string {
       <h1 id="page-title" tabindex="-1">${scenario.title}</h1>
     </div>
 
+    <!-- Karakter Pemandu Warga (Pak RT) -->
+    <div class="mascot-feedback-banner ${isSafe ? "mascot-feedback-banner--safe" : "mascot-feedback-banner--alert"}">
+      ${isSafe ? mascotIllustrations.safe : mascotIllustrations.alert}
+      <div class="mascot-feedback-bubble">
+        <strong>${isSafe ? "Tindakan Tepat dari Anda!" : "Waspada! Ini Jebakan Penipuan"}</strong>
+        <p>${isSafe ? "Pilihan Anda berhasil menghentikan risiko sebelum uang atau data Anda hilang." : "Keputusan terburu-buru seperti ini adalah celah yang paling sering dimanfaatkan pelaku kejahatan."}</p>
+      </div>
+    </div>
+
     <section
       class="simulation-feedback ${isSafe ? "simulation-feedback--safe" : "simulation-feedback--risky"}"
       role="region"
       aria-labelledby="feedback-heading"
     >
       <div class="simulation-feedback__header">
-        <span class="simulation-choice__tag ${isSafe ? "simulation-choice__tag--safe" : "simulation-choice__tag--risky"}">
-          ${isSafe ? "Pilihan Anda: Langkah yang lebih aman" : "Pilihan Anda: Tindakan berisiko tinggi"}
+        <span class="simulation-stamp simulation-stamp--animated ${isSafe ? "simulation-stamp--safe" : "simulation-stamp--risky"}">
+          ${isSafe ? "LEBIH AMAN" : "BERISIKO TINGGI"}
         </span>
         <h2 id="feedback-heading">${choice.label}</h2>
       </div>
@@ -256,9 +419,16 @@ function renderResult(state: SimulationState): string {
 
   return `
     <section class="simulation-result-wrapper" aria-labelledby="page-title">
-      <p class="eyebrow">Latihan selesai</p>
+      <div class="mascot-intro-banner">
+        ${mascotIllustrations.safe}
+        <div class="mascot-intro-bubble">
+          <strong>Latihan Selesai! Terima Kasih Telah Belajar Bersama.</strong>
+          <p>Kunci keamanan bertransaksi bukanlah kecepatan, melainkan membiasakan diri untuk selalu berhenti sejenak dan memeriksa sebelum mengambil keputusan.</p>
+        </div>
+      </div>
+
+      <p class="eyebrow">Hasil simulasi</p>
       <h1 id="page-title" tabindex="-1">Tiga Situasi Telah Selesai Dipelajari</h1>
-      <p class="lead">Kunci keamanan bertransaksi bukanlah kecepatan, melainkan membiasakan diri untuk selalu berhenti sejenak dan memeriksa sebelum mengambil keputusan.</p>
 
       <section class="simulation-result" aria-label="Ringkasan hasil latihan">
         <p class="simulation-result__label">Hasil pilihan pertama Anda:</p>
@@ -322,7 +492,9 @@ export function renderSimulation(state: SimulationState | null): string {
       ${
         state.stage !== "result"
           ? `<div class="simulation-exit-wrapper">
-              <button class="simulation-exit" type="button" data-simulation-action="exit">Keluar dan kembali ke Beranda</button>
+              <button class="button button--quiet simulation-exit" type="button" data-simulation-action="exit">
+                Kembali ke Beranda
+              </button>
              </div>`
           : ""
       }

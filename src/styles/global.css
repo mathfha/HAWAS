@@ -2,6 +2,14 @@
   box-sizing: border-box;
 }
 
+body,
+button,
+input,
+select,
+textarea {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 body {
   min-width: 320px;
   margin: 0;
@@ -9,6 +17,11 @@ body {
   color: var(--ink);
   font-size: 1rem;
   line-height: 1.6;
+}
+
+#app {
+  height: 100vh;
+  height: 100dvh;
 }
 
 a {
@@ -44,23 +57,31 @@ a {
 
 .app-shell {
   width: min(100% - 2rem, 76rem);
-  min-height: 100vh;
+  height: 100%;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
 }
 
 .site-header {
-  min-height: 5rem;
+  flex: 0 0 auto;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  background: var(--paper);
+}
+
+.site-header__top {
+  display: flex;
+  align-items: baseline;
   gap: 1rem;
-  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
 }
 
 .wordmark {
   color: var(--ink);
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 850;
   letter-spacing: 0.12em;
   text-decoration: none;
@@ -71,59 +92,104 @@ a {
   font-size: 0.85rem;
 }
 
-.sos-shortcut {
-  margin-left: auto;
-  min-height: 44px;
-  display: inline-flex;
+.site-nav {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem 0.75rem;
-  border: 1px solid var(--vermilion);
-  color: var(--vermilion);
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  font-weight: 700;
+  gap: 0.25rem;
+  padding: 0.55rem 0.2rem 0.65rem;
+  min-height: 3.6rem;
+  color: var(--muted);
   text-decoration: none;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.15;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.nav-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.nav-link__label {
+  display: block;
+  font-family: inherit;
+  font-size: 0.74rem;
+  letter-spacing: -0.01em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--ink);
+  background: rgb(23 42 58 / 3%);
+}
+
+.nav-link--active {
+  color: var(--blue);
+  font-weight: 700;
+  border-bottom-color: var(--blue);
+  background: transparent;
+}
+
+.nav-link--active .nav-icon {
+  stroke: var(--blue);
+}
+
+/* Tab SOS Menonjol Merah / Vermilion di Kanan */
+.nav-link--sos {
+  background: var(--vermilion);
+  color: white;
+  border-radius: 6px;
+  margin: 0.35rem 0.2rem;
+  padding: 0.35rem 0.2rem;
+  min-height: calc(3.6rem - 0.7rem);
+  border-bottom: none;
+  box-shadow: 0 2px 0 #7d2613;
+}
+
+.nav-link--sos .nav-icon {
+  stroke: white;
+}
+
+.nav-link--sos .nav-link__label {
+  color: white;
+  font-weight: 800;
+}
+
+.nav-link--sos:hover,
+.nav-link--sos.nav-link--active {
+  background: #8f3521;
+  color: white;
 }
 
 .page-layout {
   flex: 1;
-}
-
-.site-nav {
-  display: flex;
-  gap: 0.25rem;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--line);
-}
-
-.nav-link {
-  flex: 0 0 auto;
-  min-width: 44px;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 0.65rem;
-  color: var(--muted);
-  font-size: 0.88rem;
-  text-decoration: none;
-}
-
-.nav-link--active {
-  color: var(--ink);
-  box-shadow: inset 0 -2px var(--blue);
-  font-weight: 700;
-}
-
-.nav-link__mark {
-  color: var(--vermilion);
-  font-weight: 800;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .main-content {
-  max-width: 46rem;
-  padding-block: clamp(2.5rem, 8vw, 5rem);
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-block: clamp(1.5rem, 5vw, 3rem);
 }
 
 .eyebrow,
@@ -175,22 +241,51 @@ h2 {
 
 .button {
   display: inline-flex;
-  min-height: 3rem;
+  min-height: 3.25rem;
   align-items: center;
   justify-content: center;
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1.25rem;
   text-decoration: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
 }
 
 .button--primary {
   background: var(--blue);
   color: white;
-  font-weight: 700;
+  border-color: #24476e;
+  box-shadow: 0 3px 0 #1e3b5c;
+}
+
+.button--primary:hover {
+  background: #284c75;
+}
+
+.button--primary:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #1e3b5c;
 }
 
 .button--quiet {
-  border: 1px solid var(--line);
+  background: white;
+  border: 2px solid var(--line);
   color: var(--ink);
+  box-shadow: 0 3px 0 #c2bcb0;
+}
+
+.button--quiet:hover {
+  background: #fcfbfa;
+  border-color: var(--muted);
+}
+
+.button--quiet:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #c2bcb0;
 }
 
 .section {
@@ -297,11 +392,13 @@ code {
 }
 
 .site-footer {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   gap: 1rem;
   padding-block: 1rem;
   border-top: 1px solid var(--line);
+  background: var(--paper);
   color: var(--muted);
   font-size: 0.78rem;
 }
@@ -310,49 +407,35 @@ code {
   white-space: nowrap;
 }
 
-@media (min-width: 760px) {
-  .page-layout {
-    display: grid;
-    grid-template-columns: 12rem minmax(0, 1fr);
-    gap: clamp(2rem, 6vw, 5rem);
-  }
-
-  .site-nav {
-    position: sticky;
-    top: 1rem;
-    align-self: start;
-    flex-direction: column;
-    gap: 0;
-    margin-top: 3rem;
-    overflow: visible;
-    border: 0;
+@media (max-width: 480px) {
+  .site-header {
+    gap: 0.65rem;
+    padding-block: 0.75rem 0.5rem;
   }
 
   .nav-link {
-    padding: 0.65rem 0.75rem;
-    border-left: 2px solid transparent;
+    min-height: 3.25rem;
+    padding: 0.45rem 0.1rem;
+    font-size: 0.68rem;
   }
 
-  .nav-link--active {
-    border-left-color: var(--blue);
-    box-shadow: none;
+  .nav-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .nav-link__label {
+    font-size: 0.64rem;
+  }
+
+  .header-caption {
+    font-size: 0.78rem;
   }
 }
 
 @media (max-width: 420px) {
   .app-shell {
     width: min(100% - 1.25rem, 76rem);
-  }
-
-  .header-caption {
-    max-width: 10rem;
-    font-size: 0.72rem;
-    line-height: 1.25;
-  }
-
-  .nav-link {
-    padding-inline: 0.5rem;
-    font-size: 0.82rem;
   }
 }
 
