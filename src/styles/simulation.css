@@ -56,7 +56,7 @@
 }
 
 .simulation-intro {
-  max-width: 44rem;
+  width: 100%;
 }
 
 .simulation-notice-box {
@@ -973,7 +973,7 @@
 }
 
 .simulation-result-wrapper {
-  max-width: 44rem;
+  width: 100%;
 }
 
 .simulation-result {

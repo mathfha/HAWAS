@@ -19,35 +19,63 @@ function escapeHtml(value: string): string {
 }
 
 function renderForm(): string {
+  const sample1 = "Halo, paket tertahan di gudang kami karena alamat tidak lengkap. Kami petugas kurir meminta Anda segera unduh aplikasi Surat_Jalan.apk berikut untuk verifikasi sebelum dibatalkan.";
+  const sample2 = "Pemberitahuan resmi: Kami dari pihak Bank menginfokan bahwa rekening Anda akan diblokir dalam 30 menit. Segera buka https://bantuan-bank-verifikasi.online dan berikan kode verifikasi SMS kepada petugas.";
+  const sample3 = "Selamat! Nomor Anda terpilih sebagai pemenang hadiah tunai Rp10.000.000. Untuk klaim cashback, segera transfer biaya administrasi Rp100.000 ke rekening bendahara dan konfirmasi lewat bit.ly/klaim-hadiah";
+
   return `
-    <div class="check-warning" role="note">
-      <h2>Sebelum menempel pesan</h2>
-      <ul>
-        <li>Hapus nama, nomor telepon, nomor rekening, dan alamat pribadi.</li>
-        <li>Jangan masukkan OTP, PIN, kata sandi, atau nomor kartu.</li>
-        <li>URL hanya dibaca sebagai teks. HAWAS tidak membuka alamat tersebut.</li>
+    <div class="check-warning" role="note" aria-label="Panduan privasi sebelum menempel pesan">
+      <div class="check-warning__header">
+        <svg class="check-warning__icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <h2>Panduan Privasi & Keamanan Sebelum Menempel Pesan</h2>
+      </div>
+      <ul class="check-warning__list">
+        <li><strong>Hapus data pribadi:</strong> Jangan sertakan nama lengkap, nomor telepon, nomor rekening, atau alamat rumah Anda.</li>
+        <li><strong>Jaga kode rahasia:</strong> Jangan masukkan OTP, PIN, kata sandi, atau nomor kartu.</li>
+        <li><strong>Aman dan lokal:</strong> URL hanya dibaca sebagai teks. HAWAS tidak pernah membuka atau mengunjungi alamat tersebut.</li>
       </ul>
     </div>
 
     <form class="check-form" data-check-form novalidate>
-      <label for="check-input">Isi pesan atau URL</label>
-      <p id="check-input-help">Tempel pesan yang ingin diperiksa setelah data pribadi dihapus.</p>
-      <textarea
-        id="check-input"
-        name="checkInput"
-        rows="9"
-        maxlength="${MAX_CHECK_INPUT_LENGTH}"
-        aria-describedby="check-input-help check-counter check-error"
-        placeholder="Tempel isi pesan di sini. Hapus data pribadi terlebih dahulu."
-        required
-      ></textarea>
-      <div class="check-form__meta">
-        <span id="check-counter" aria-live="polite"><span data-check-count>0</span> / ${MAX_CHECK_INPUT_LENGTH.toLocaleString("id-ID")}</span>
-        <span>Maksimal ${MAX_CHECK_INPUT_LENGTH.toLocaleString("id-ID")} karakter</span>
+      <div class="check-form__label-row">
+        <label for="check-input">Isi pesan atau tautan (URL)</label>
+        <span class="check-form__badge">Pemeriksaan Lokal</span>
       </div>
+      <p id="check-input-help">Tempelkan teks pesan SMS, WhatsApp, atau tautan yang mencurigakan di bawah ini.</p>
+
+      <div class="check-samples" aria-label="Pilihan contoh pesan untuk latihan">
+        <span class="check-samples__label">Coba contoh situasi:</span>
+        <div class="check-samples__chips">
+          <button type="button" class="check-chip" data-check-sample="${escapeHtml(sample1)}">Kurir Paket (Unduh .APK)</button>
+          <button type="button" class="check-chip" data-check-sample="${escapeHtml(sample2)}">Pesan Bank (Ancaman Blokir)</button>
+          <button type="button" class="check-chip" data-check-sample="${escapeHtml(sample3)}">Undian Hadiah (Biaya Transfer)</button>
+        </div>
+      </div>
+
+      <div class="check-textarea-wrap">
+        <textarea
+          id="check-input"
+          name="checkInput"
+          rows="9"
+          maxlength="${MAX_CHECK_INPUT_LENGTH}"
+          aria-describedby="check-input-help check-counter check-error"
+          placeholder="Tempel isi pesan di sini. Pastikan data pribadi Anda sudah dihapus..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="check-form__meta">
+        <span id="check-counter" aria-live="polite"><span data-check-count>0</span> / ${MAX_CHECK_INPUT_LENGTH.toLocaleString("id-ID")} karakter</span>
+        <span class="check-form__privacy-note">Teks diperiksa langsung di peramban ponsel Anda</span>
+      </div>
+
       <div id="check-error" class="check-error" role="alert" tabindex="-1" hidden></div>
+
       <div class="check-form__actions">
-        <button class="button button--primary" type="submit">Periksa pola pesan</button>
+        <button class="button button--primary check-btn-submit" type="submit">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          Periksa pola pesan
+        </button>
         <button class="button button--quiet" type="button" data-check-action="clear">Hapus isi</button>
       </div>
     </form>

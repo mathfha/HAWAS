@@ -137,7 +137,7 @@ function renderHome(): string {
 
         <div class="actions">
           <a class="button home-hero__primary" href="#/simulasi">Mulai latihan simulasi (3 situasi)</a>
-          <a class="button home-hero__sos" href="#/sos">Sedang mengalami masalah? Buka Bantuan SOS</a>
+          <a class="button home-hero__sos" href="#/sos">Buka Bantuan SOS</a>
         </div>
       </div>
     </section>
@@ -513,17 +513,25 @@ export function mountApp(root: HTMLElement): void {
       <a class="skip-link" href="#main-content">Lewati langsung ke konten utama</a>
       <div class="app-shell">
         <header class="site-header">
-          <div class="site-header__top">
-            <a class="brand-logo-link" href="#/" aria-label="HAWAS, Beranda Utama">
-              <img
-                class="brand-logo"
-                src="/img/hawas-logo.png"
-                alt="HAWAS"
-                width="720"
-                height="240"
-                fetchpriority="high"
-              />
-            </a>
+          <div class="site-header__brand">
+            <div class="site-header__top">
+              <a class="brand-logo-link" href="#/" aria-label="HAWAS, Beranda Utama">
+                <img
+                  class="brand-logo"
+                  src="/img/hawas-logo.png"
+                  alt="HAWAS"
+                  width="678"
+                  height="175"
+                  fetchpriority="high"
+                />
+              </a>
+              <div class="site-header__pattern">
+                <div class="site-header__heading">
+                  <span>Panduan keamanan transaksi digital</span>
+                  <strong>Hati-hati dan Awas Bertransaksi</strong>
+                </div>
+              </div>
+            </div>
           </div>
           <nav class="site-nav" aria-label="Navigasi menu utama">${renderNavigation(activeRoute)}</nav>
         </header>
@@ -833,6 +841,26 @@ export function mountApp(root: HTMLElement): void {
         }
         return;
       }
+    }
+
+    const checkSample = event.target.closest<HTMLButtonElement>(
+      "[data-check-sample]",
+    );
+    if (checkSample && resolveRoute(window.location.hash) === "check") {
+      const sampleText = checkSample.dataset.checkSample ?? "";
+      const input = root.querySelector<HTMLTextAreaElement>("#check-input");
+      const counter = root.querySelector<HTMLElement>("[data-check-count]");
+      const error = root.querySelector<HTMLElement>("#check-error");
+      if (input) {
+        input.value = sampleText;
+        input.focus();
+      }
+      if (counter) counter.textContent = sampleText.length.toLocaleString("id-ID");
+      if (error) {
+        error.textContent = "";
+        error.hidden = true;
+      }
+      return;
     }
 
     const sosFilter = event.target.closest<HTMLButtonElement>(

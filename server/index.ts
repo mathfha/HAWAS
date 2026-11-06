@@ -12,6 +12,7 @@ const config = readServerConfig();
 const ai = new VertexAiExplainer({
   project: config.googleCloudProject,
   location: config.googleCloudLocation,
+  apiKey: config.geminiApiKey,
   model: config.vertexModel,
   timeoutMs: config.aiTimeoutMs,
 });

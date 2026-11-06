@@ -30,8 +30,9 @@ export class AiServiceError extends Error {
 }
 
 interface VertexExplainerOptions {
-  project: string;
-  location: string;
+  project?: string;
+  location?: string;
+  apiKey?: string;
   model: string;
   timeoutMs: number;
 }
@@ -92,12 +93,18 @@ export class VertexAiExplainer implements AiExplainer {
 
   constructor(options: VertexExplainerOptions) {
     this.options = options;
-    this.client = new GoogleGenAI({
-      vertexai: true,
-      project: options.project,
-      location: options.location,
-      apiVersion: "v1",
-    });
+    if (options.apiKey) {
+      this.client = new GoogleGenAI({
+        apiKey: options.apiKey,
+      });
+    } else {
+      this.client = new GoogleGenAI({
+        vertexai: true,
+        project: options.project,
+        location: options.location,
+        apiVersion: "v1",
+      });
+    }
   }
 
   async explain(
