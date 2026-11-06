@@ -1,0 +1,11 @@
+project_id           = "hawas-production"
+billing_account      = "000000-000000-000000"
+region               = "asia-southeast1"
+api_domain           = "api.hawas.example"
+frontend_origin      = "https://hawas.example"
+container_image      = "us-docker.pkg.dev/cloudrun/container/hello"
+vertex_model         = "gemini-3.5-flash"
+monthly_budget_amount = 25
+budget_currency_code = "USD"
+github_repository    = "pemilik/HAWAS"
+monitoring_notification_channels = []

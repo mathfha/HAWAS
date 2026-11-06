@@ -1,14 +1,60 @@
-import { routes, resolveRoute, type RouteId } from "./routes";
+import {
+  getPracticeHref,
+  resolvePracticeScenario,
+  routes,
+  resolveRoute,
+  type RouteId,
+} from "./routes.ts";
 import {
   continueSimulation,
+  createPracticeSimulationState,
+  createSelectedSimulationState,
   createSimulationState,
+  initialFictionalBalance,
+  isScenarioId,
   recordChoice,
+  restartSimulation,
   retryScenario,
+  validateStartingBalance,
   type SimulationState,
-} from "../features/simulation/model";
-import { renderSimulation } from "../features/simulation/view";
-import { sosContent } from "../content/sos";
-import { mascotIllustrations } from "../content/illustrations";
+} from "../features/simulation/model.ts";
+import { renderSimulation } from "../features/simulation/view.ts";
+import {
+  analyzeCheckInput,
+  createCheckResultState,
+  createCheckState,
+  prepareCheckAiInput,
+  setCheckAiError,
+  setCheckAiLoading,
+  setCheckAiSuccess,
+  validateCheckInput,
+  type CheckViewState,
+} from "../features/check/model.ts";
+import { requestCheckAiExplanation } from "../features/check/client.ts";
+import { renderCheck } from "../features/check/view.ts";
+import { sosContent } from "../content/sos.ts";
+import { mascotIllustrations } from "../content/illustrations.ts";
+import { scenarios } from "../content/scenarios.ts";
+import { decodeQrisImage } from "../features/qris/decoder.ts";
+import {
+  createDecodedQrisState,
+  createQrisState,
+  createReviewedQrisState,
+  isQrisCheckAnswer,
+  isQrisPressureAnswer,
+  isQrisSource,
+  QrisDomainError,
+  validateQrisImageFile,
+  type QrisContextAnswers,
+  type QrisViewState,
+} from "../features/qris/model.ts";
+import { renderQris } from "../features/qris/view.ts";
+import {
+  isSosIncidentId,
+  shouldShowSosIncident,
+  toggleSosIncident,
+  type SosIncidentId,
+} from "../features/sos/model.ts";
 
 const pageCopy: Record<RouteId, { title: string; description: string }> = {
   home: {
@@ -22,14 +68,14 @@ const pageCopy: Record<RouteId, { title: string; description: string }> = {
       "Latihan menghadapi tiga contoh situasi transaksi digital yang sering terjadi sehari-hari menggunakan saldo dan data tiruan.",
   },
   check: {
-    title: "Cek Pola Pesan (Tahap Pengembangan)",
+    title: "Cek Pola Pesan",
     description:
-      "Fitur pemeriksaan pola pesan mencurigakan ini belum tersedia. Jangan tempelkan pesan, nomor rekening, atau data pribadi apa pun di sini.",
+      "Periksa pola dalam teks pesan dan URL melalui aturan lokal tanpa membuka tautan.",
   },
   qris: {
-    title: "Periksa Kode QRIS (Tahap Pengembangan)",
+    title: "Panduan Sebelum Bayar QRIS",
     description:
-      "Fitur pemeriksaan kode QR ini belum tersedia. HAWAS tidak sedang membaca, memeriksa, atau memproses kode pembayaran apa pun.",
+      "Baca informasi QRIS dan periksa situasi pembayaran sebelum mengambil keputusan.",
   },
   sos: {
     title: "Panduan Darurat jika Mengalami Masalah (Bantuan SOS)",
@@ -75,24 +121,28 @@ function renderNavigation(activeRoute: RouteId): string {
 
 function renderHome(): string {
   return `
-    <div class="mascot-intro-banner">
-      ${mascotIllustrations.intro}
-      <div class="mascot-intro-bubble">
-        <strong>Halo! Saya Pak RT, pemandu warga.</strong>
-        <p>Saya akan membantu Anda belajar mengenali jebakan penipuan digital lewat latihan aman di ponsel.</p>
+    <section class="home-hero" aria-labelledby="page-title">
+      <div class="mascot-intro-banner">
+        ${mascotIllustrations.intro}
+        <div class="mascot-intro-bubble">
+          <strong>Halo! Saya Pemandu Edukasi Pembayaran Digital.</strong>
+          <p>Saya akan membantu Anda belajar mengenali jebakan penipuan digital lewat latihan aman di ponsel sesuai panduan literasi transaksi.</p>
+        </div>
       </div>
-    </div>
 
-    <p class="eyebrow">Panduan keamanan transaksi digital masyarakat</p>
-    <h1 id="page-title" tabindex="-1">Hati-hati dan Awas Bertransaksi (HAWAS)</h1>
-    <p class="lead">Media belajar mandiri untuk melatih kewaspadaan saat bertransaksi di ponsel. Tanpa memakai uang sungguhan, tanpa mendaftar akun, dan tanpa meminta data pribadi Anda.</p>
-    
-    <div class="actions">
-      <a class="button button--primary" href="#/simulasi">Mulai latihan simulasi (3 situasi)</a>
-      <a class="button button--quiet" href="#/sos">Sedang mengalami masalah? Buka Bantuan SOS</a>
-    </div>
+      <div class="home-hero__content">
+        <p class="eyebrow">Panduan keamanan transaksi digital masyarakat</p>
+        <h1 id="page-title" tabindex="-1">Hati-hati dan Awas Bertransaksi (HAWAS)</h1>
+        <p class="lead">Media belajar mandiri untuk melatih kewaspadaan saat bertransaksi di ponsel. Tanpa memakai uang sungguhan, tanpa mendaftar akun, dan tanpa meminta data pribadi Anda.</p>
 
-    <section class="section" aria-labelledby="scenarios-heading">
+        <div class="actions">
+          <a class="button home-hero__primary" href="#/simulasi">Mulai latihan simulasi (3 situasi)</a>
+          <a class="button home-hero__sos" href="#/sos">Sedang mengalami masalah? Buka Bantuan SOS</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section home-section home-section--situations" aria-labelledby="scenarios-heading">
       <p class="eyebrow">Tiga contoh situasi latihan</p>
       <h2 id="scenarios-heading">Kenali tanda-tandanya sebelum mengambil tindakan</h2>
       <ol class="scenario-list">
@@ -120,7 +170,7 @@ function renderHome(): string {
       </ol>
     </section>
 
-    <section class="section" aria-labelledby="how-it-works-heading">
+    <section class="section home-section home-section--principles" aria-labelledby="how-it-works-heading">
       <p class="eyebrow">Prinsip penggunaan</p>
       <h2 id="how-it-works-heading">Cara kerja situs edukasi ini</h2>
       <ol class="scenario-list">
@@ -154,141 +204,309 @@ function renderHome(): string {
   `;
 }
 
-function renderSos(): string {
+function renderSosChannelActions(incidentId: SosIncidentId): string {
+  if (incidentId === "transfer") {
+    return `
+      <div class="sos-channel-actions">
+        <a class="button sos-button--emergency" href="https://iasc.ojk.go.id" target="_blank" rel="noopener noreferrer" aria-label="Buka situs resmi IASC, membuka tab baru">Buka situs resmi IASC</a>
+        <span>Situs resmi: <strong>iasc.ojk.go.id</strong></span>
+      </div>
+    `;
+  }
+
+  if (incidentId === "payment") {
+    return `
+      <div class="sos-channel-actions">
+        <a class="button sos-button--emergency" href="tel:131">Telepon BI BICARA 131</a>
+        <a class="button button--quiet" href="https://bicara131.bi.go.id" target="_blank" rel="noopener noreferrer" aria-label="Buka portal resmi BI BICARA, membuka tab baru">Buka portal BI BICARA</a>
+        <span>Portal resmi: <strong>bicara131.bi.go.id</strong></span>
+      </div>
+    `;
+  }
+
+  return "";
+}
+
+export function renderSos(selectedIncidents: readonly SosIncidentId[] = []): string {
+  const selectionStatus =
+    selectedIncidents.length === 0
+      ? "Semua panduan sedang ditampilkan."
+      : `${selectedIncidents.length} panduan dipilih.`;
+
   return `
-    <p class="eyebrow">Panduan darurat transaksi</p>
-    <h1 id="page-title" tabindex="-1">Langkah Penyelamatan jika Anda Mengalami Masalah</h1>
-    <p class="lead">Jika Anda baru saja mengirim uang ke pihak yang mencurigakan, membagikan kode rahasia, atau memasang aplikasi asing, segera lakukan langkah penyelamatan berikut secara berurutan:</p>
+    <section class="sos-page" aria-labelledby="page-title">
+      <header class="sos-intro">
+        <h1 id="page-title" tabindex="-1">Panduan Darurat Transaksi</h1>
+        <p class="lead">Jika Anda baru saja mengirim uang, membagikan kode rahasia, atau memasang aplikasi asing, ikuti tindakan berikut dengan tenang.</p>
+      </header>
 
-    <ol class="sos-list">
-      <li>
-        <div>
-          <strong>Langkah 1: Hentikan komunikasi dan amankan ponsel Anda sekarang juga</strong>
-          <p class="sos-list__desc">Jangan berikan kode rahasia (OTP atau PIN) apa pun lagi kepada penelepon atau pengirim pesan.</p>
-          <div class="sos-highlight-box">
-            <strong>Jika Anda sempat memasang berkas aplikasi (.APK) dari chat:</strong>
-            <p class="sos-highlight-box__desc">Segera putuskan koneksi internet di ponsel tersebut (aktifkan Mode Pesawat atau matikan Wi-Fi dan data seluler). Jangan membuka aplikasi perbankan di ponsel itu. Ganti kata sandi akun penting Anda dari ponsel atau komputer lain yang aman.</p>
+      <section class="sos-now" aria-labelledby="sos-now-title">
+        <h2 id="sos-now-title">Lakukan sekarang</h2>
+        <ol class="sos-now__list">
+          ${sosContent.urgentActions
+            .map((action) => `<li><span>${action}</span></li>`)
+            .join("")}
+        </ol>
+      </section>
+
+      <section class="sos-picker" aria-labelledby="sos-picker-title">
+        <div class="sos-picker__heading">
+          <div>
+            <h2 id="sos-picker-title">Apa yang terjadi?</h2>
+            <p>Pilih satu atau beberapa kejadian untuk menampilkan langkah yang sesuai.</p>
           </div>
+          <button class="sos-show-all" type="button" data-sos-filter="all" aria-pressed="${selectedIncidents.length === 0}">Tampilkan semua langkah</button>
         </div>
-      </li>
-      <li>
-        <div>
-          <strong>Langkah 2: Segera hubungi pihak bank atau penyedia dompet digital Anda</strong>
-          <p class="sos-list__desc">Buka nomor resmi yang Anda cari sendiri (misalnya nomor telepon di belakang kartu ATM atau aplikasi resmi bank). Minta petugas bank untuk memblokir rekening atau kartu Anda sementara waktu agar saldo tidak terkuras lebih lanjut.</p>
+        <div class="sos-filter-grid" role="group" aria-label="Pilih kejadian yang dialami">
+          ${sosContent.incidents
+            .map(
+              (incident) => `
+                <button
+                  class="sos-filter"
+                  type="button"
+                  data-sos-filter="${incident.id}"
+                  aria-pressed="${selectedIncidents.includes(incident.id)}"
+                >${incident.label}</button>
+              `,
+            )
+            .join("")}
         </div>
-      </li>
-      <li>
-        <div>
-          <strong>Langkah 3: Laporkan penipuan transaksi keuangan ke IASC (OJK)</strong>
-          <p class="sos-list__desc">Kanal resmi pelaporan penipuan keuangan: <strong>Indonesia Anti-Scam Centre (IASC)</strong> di situs <a href="https://iasc.ojk.go.id" target="_blank" rel="noreferrer">iasc.ojk.go.id</a>. Kanal ini dikelola bersama oleh Otoritas Jasa Keuangan (OJK) dan asosiasi perbankan. Jika Anda mengalami kerugian uang nyata, buat pula laporan ke kantor kepolisian setempat.</p>
-        </div>
-      </li>
-      <li>
-        <div>
-          <strong>Langkah 4: Untuk masalah atau keluhan sistem pembayaran, hubungi BI BICARA (Bank Indonesia)</strong>
-          <p class="sos-list__desc">Jika Anda mengalami kendala teknis pada layanan sistem pembayaran antarbank, hubungi BI BICARA melalui telepon <strong>131</strong> atau situs <a href="https://bicara131.bi.go.id" target="_blank" rel="noreferrer">bicara131.bi.go.id</a>. Catatan: Kanal ini ditujukan untuk keluhan sistem pembayaran resmi, bukan untuk laporan tindak pidana penipuan.</p>
-        </div>
-      </li>
-    </ol>
+        <p class="sos-selection-status" aria-live="polite">${selectionStatus} Pilihan tidak disimpan.</p>
+      </section>
 
-    <section class="section" aria-labelledby="evidence-heading">
-      <p class="eyebrow">Persiapan pelaporan</p>
-      <h2 id="evidence-heading">Bukti yang perlu Anda siapkan sebelum melapor</h2>
-      <p class="evidence-lead">Kumpulkan informasi berikut agar mempermudah petugas saat memproses laporan Anda:</p>
-      <ul class="evidence-list">
-        ${sosContent.evidence.map((item) => `<li>${item}</li>`).join("")}
-      </ul>
+      <section class="sos-guidance" aria-labelledby="sos-guidance-title">
+        <h2 id="sos-guidance-title">Langkah penyelamatan</h2>
+        <div class="sos-incident-list">
+          ${sosContent.incidents
+            .map(
+              (incident) => `
+                <article
+                  class="sos-incident"
+                  id="sos-${incident.id}"
+                  data-sos-incident="${incident.id}"
+                  ${shouldShowSosIncident(selectedIncidents, incident.id) ? "" : "hidden"}
+                >
+                  <header>
+                    <h3>${incident.title}</h3>
+                    <p>${incident.summary}</p>
+                  </header>
+                  <ol>
+                    ${incident.steps.map((step) => `<li>${step}</li>`).join("")}
+                  </ol>
+                  ${renderSosChannelActions(incident.id)}
+                </article>
+              `,
+            )
+            .join("")}
+        </div>
+      </section>
+
+      <details class="sos-evidence" id="sos-evidence">
+        <summary>Bukti yang perlu disiapkan untuk laporan</summary>
+        <p>Kumpulkan informasi yang tersedia. Jangan menunda tindakan darurat hanya karena bukti belum lengkap.</p>
+        <ul>
+          ${sosContent.evidence.map((item) => `<li>${item}</li>`).join("")}
+        </ul>
+      </details>
+
+      <div class="sos-disclaimer" role="note">
+        <strong>Peringatan:</strong>
+        <p>${sosContent.disclaimer} Jangan unggah bukti, nomor rekening, atau data pribadi ke HAWAS.</p>
+      </div>
+      <p class="sos-source-note">Kanal resmi terakhir diperiksa ${sosContent.lastChecked}. Pastikan alamat yang dibuka adalah <strong>iasc.ojk.go.id</strong> atau <strong>bicara131.bi.go.id</strong>.</p>
     </section>
-
-    <div class="disclaimer" role="note">
-      <strong>Peringatan penting:</strong> ${sosContent.disclaimer} Jangan pernah mengunggah bukti, nomor rekening, atau data pribadi Anda ke dalam situs web HAWAS ini.
-    </div>
-    <p class="source-note">Informasi kontak dicatat dan diperiksa berkala (terakhir diperiksa November 2026). Selalu pastikan Anda membuka alamat resmi yang tepercaya.</p>
   `;
 }
 
-function renderLearn(): string {
+export function renderLearn(): string {
   return `
-    <p class="eyebrow">Panduan belajar mandiri</p>
-    <h1 id="page-title" tabindex="-1">Tiga Kebiasaan Sederhana agar Aman Bertransaksi</h1>
-    <p class="lead">Sebagian besar modus kejahatan digital memanfaatkan kepanikan atau rasa terburu-buru. Terapkan tiga kebiasaan ini untuk melindungi diri dan keluarga:</p>
+    <section class="learn-page" aria-labelledby="page-title">
+      <header class="learn-intro">
+        <h1 id="page-title" tabindex="-1">Tiga Kebiasaan Sederhana agar Aman Bertransaksi</h1>
+        <p class="lead">Saat merasa panik atau diburu waktu, berhenti sebentar. Baca tiga pengingat singkat dari warga berikut.</p>
+        <p class="learn-intro__hint">Baca pengingat singkatnya terlebih dahulu. Buka penjelasan hanya jika Anda ingin mengetahui alasannya.</p>
+      </header>
 
-    <ol class="scenario-list">
-      <li>
-        <span class="step-number">01</span>
-        <div>
-          <strong>Kebiasaan 1: Jangan pasang berkas aplikasi (.APK) yang dikirim lewat chat</strong>
-          <p class="scenario-list__desc">
-            <strong>Penjelasan sederhana:</strong> Berkas dengan nama berakhiran <code>.apk</code> adalah berkas pemasang aplikasi di ponsel Android. Penipu sering menyamarkannya sebagai foto paket kurir, surat undangan pernikahan, atau surat tilang. Jika berkas ini dipasang, ponsel Anda bisa disusupi sehingga pelaku dapat membaca SMS dan menguras rekening Anda.
-          </p>
-          <p class="scenario-list__desc"><strong>Langkah aman:</strong> Pasang aplikasi hanya dari toko resmi Google Play Store. <a href="#/simulasi">Coba latihan skenario kurir APK</a></p>
-        </div>
-      </li>
-      <li>
-        <span class="step-number">02</span>
-        <div>
-          <strong>Kebiasaan 2: Jangan pernah membagikan kode rahasia (OTP) atau PIN kepada siapa pun</strong>
-          <p class="scenario-list__desc">
-            <strong>Penjelasan sederhana:</strong> Kode OTP (One-Time Password) adalah 6 angka rahasia sekali pakai yang dikirimkan bank lewat SMS untuk menyetujui transaksi penting. Petugas bank atau kurir resmi tidak akan pernah meminta kode rahasia ini lewat telepon atau chat. Siapa pun yang memintanya patut dicurigai.
-          </p>
-          <p class="scenario-list__desc"><strong>Langkah aman:</strong> Tutup telepon jika ada yang meminta kode SMS rahasia Anda. <a href="#/simulasi">Coba latihan skenario panggilan telepon</a></p>
-        </div>
-      </li>
-      <li>
-        <span class="step-number">03</span>
-        <div>
-          <strong>Kebiasaan 3: Selalu periksa nama penerima sebelum menyetujui pembayaran kode QR (QRIS)</strong>
-          <p class="scenario-list__desc">
-            <strong>Penjelasan sederhana:</strong> Saat Anda memindai kode QRIS di warung atau toko, layar ponsel Anda akan menampilkan nama penerima pembayaran (merchant). Selalu cocokkan nama yang tertera di layar dengan nama toko tempat Anda berdiri. Jika nama yang tertera berbeda, jangan langsung bayar.
-          </p>
-          <p class="scenario-list__desc"><strong>Langkah aman:</strong> Tanyakan kepada kasir sebelum konfirmasi pembayaran. Perbedaan nama adalah alasan untuk bertanya, bukan vonis penipuan. <a href="#/simulasi">Coba latihan skenario kode QR (QRIS)</a></p>
-        </div>
-      </li>
-    </ol>
+      <div class="learn-stories">
+        <article class="learn-story" aria-labelledby="learn-apk-title">
+          <header class="learn-story__header">
+            <span class="learn-story__number" aria-hidden="true">01</span>
+            <div>
+              <h2 id="learn-apk-title">Jangan pasang APK yang dikirim lewat chat</h2>
+              <p class="learn-story__topic">Berkas aplikasi Android (APK)</p>
+            </div>
+          </header>
+          <figure class="learn-story__scene">
+            <div class="learn-story__image-frame">
+              <img src="/img/learn-apk-guide.webp" alt="Pemandu warga menunjukkan berkas aplikasi mencurigakan di ponsel dan memberi isyarat berhenti" width="900" height="690" />
+            </div>
+            <figcaption class="learn-speech">
+              <blockquote>“Ada berkas paket berakhiran <code>.apk</code> dari chat? Jangan dipasang. Cari aplikasinya di toko resmi.”</blockquote>
+              <span>Ilustrasi pemandu warga</span>
+            </figcaption>
+          </figure>
+          <div class="learn-story__takeaway">
+            <strong>Ingat singkat:</strong>
+            <p>APK adalah berkas pemasang aplikasi Android, bukan foto atau dokumen biasa.</p>
+          </div>
+          <details class="learn-story__details">
+            <summary>Mengapa ini penting?</summary>
+            <p>Berkas APK dapat disamarkan sebagai foto paket, undangan, atau surat tilang. Jika dipasang dari sumber tidak tepercaya, aplikasi tersebut dapat meminta akses berbahaya pada ponsel.</p>
+            <p>Pasang aplikasi hanya dari toko aplikasi resmi. Jika ragu, jangan buka berkasnya.</p>
+          </details>
+          <a class="button button--primary learn-story__action" href="${getPracticeHref("courier-apk")}">Coba latihan kurir APK</a>
+        </article>
 
-    <div class="actions">
-      <a class="button button--primary" href="#/simulasi">Mulai latihan simulasi sekarang</a>
-      <a class="button button--quiet" href="#/sos">Lihat panduan darurat SOS</a>
-    </div>
+        <article class="learn-story learn-story--reverse" aria-labelledby="learn-otp-title">
+          <header class="learn-story__header">
+            <span class="learn-story__number" aria-hidden="true">02</span>
+            <div>
+              <h2 id="learn-otp-title">Jangan berikan kode rahasia kepada siapa pun</h2>
+              <p class="learn-story__topic">Kode rahasia OTP dan PIN</p>
+            </div>
+          </header>
+          <figure class="learn-story__scene">
+            <div class="learn-story__image-frame">
+              <img src="/img/learn-otp-guide.webp" alt="Seorang warga dengan tenang menekan tombol untuk menutup panggilan mencurigakan" width="900" height="822" loading="lazy" decoding="async" />
+            </div>
+            <figcaption class="learn-speech">
+              <blockquote>“Ada yang meminta OTP atau PIN? Saya tutup telepon. Kode rahasia hanya untuk saya.”</blockquote>
+              <span>Ilustrasi warga yang waspada</span>
+            </figcaption>
+          </figure>
+          <div class="learn-story__takeaway">
+            <strong>Ingat singkat:</strong>
+            <p>OTP adalah kode rahasia sekali pakai untuk menyetujui tindakan penting.</p>
+          </div>
+          <details class="learn-story__details">
+            <summary>Mengapa ini penting?</summary>
+            <p>OTP biasanya dikirim melalui SMS atau aplikasi untuk menyetujui transaksi. PIN juga bersifat rahasia. Jangan membacakan atau mengirimkannya melalui telepon maupun chat.</p>
+            <p>Jika seseorang mendesak meminta kode tersebut, tutup komunikasi lalu hubungi layanan resmi melalui nomor yang Anda cari sendiri.</p>
+          </details>
+          <a class="button button--primary learn-story__action" href="${getPracticeHref("otp-call")}">Coba latihan telepon OTP</a>
+        </article>
+
+        <article class="learn-story" aria-labelledby="learn-qris-title">
+          <header class="learn-story__header">
+            <span class="learn-story__number" aria-hidden="true">03</span>
+            <div>
+              <h2 id="learn-qris-title">Periksa nama penerima sebelum membayar</h2>
+              <p class="learn-story__topic">Pembayaran kode QRIS</p>
+            </div>
+          </header>
+          <figure class="learn-story__scene">
+            <div class="learn-story__image-frame learn-story__image-frame--wide">
+              <img src="/img/learn-qris-guide.webp" alt="Pembeli dan kasir bersama-sama memeriksa nama penerima pembayaran pada layar ponsel" width="1000" height="667" loading="lazy" decoding="async" />
+            </div>
+            <figcaption class="learn-speech">
+              <blockquote>“Sebelum bayar QRIS, lihat nama penerimanya. Jika terasa berbeda, tanyakan kepada kasir.”</blockquote>
+              <span>Ilustrasi kasir dan pembeli</span>
+            </figcaption>
+          </figure>
+          <div class="learn-story__takeaway">
+            <strong>Ingat singkat:</strong>
+            <p>Nama penerima yang berbeda adalah alasan untuk bertanya, bukan bukti penipuan.</p>
+          </div>
+          <details class="learn-story__details">
+            <summary>Mengapa ini penting?</summary>
+            <p>QRIS adalah kode bayar digital nasional. Setelah dipindai, aplikasi pembayaran menampilkan nama penerima pembayaran.</p>
+            <p>Cocokkan nama tersebut dengan informasi dari kasir. Jika berbeda atau terasa asing, jangan buru-buru membayar.</p>
+          </details>
+          <a class="button button--primary learn-story__action" href="${getPracticeHref("merchant-name")}">Coba latihan periksa QRIS</a>
+        </article>
+      </div>
+
+      <div class="learn-closing">
+        <strong>Ingat tiga tindakan: jangan pasang, jangan bagikan, dan periksa sebelum bayar.</strong>
+        <div class="actions">
+          <a class="button button--primary" href="#/simulasi">Mulai simulasi lengkap</a>
+          <a class="button button--quiet" href="#/sos">Buka panduan darurat SOS</a>
+        </div>
+      </div>
+    </section>
   `;
 }
 
 function renderPage(
   routeId: RouteId,
   simulationState: SimulationState | null,
+  simulationStartingBalance: number,
+  checkState: CheckViewState,
+  qrisState: QrisViewState,
+  selectedSosIncidents: readonly SosIncidentId[],
+  checkAiEnabled = false,
 ): string {
   if (routeId === "home") return renderHome();
-  if (routeId === "sos") return renderSos();
+  if (routeId === "sos") return renderSos(selectedSosIncidents);
   if (routeId === "learn") return renderLearn();
-  if (routeId === "simulation") return renderSimulation(simulationState);
-
-  if (routeId === "not-found") {
-    return `
-      <p class="eyebrow">404: Tidak ditemukan</p>
-      <h1 id="page-title" tabindex="-1">${pageCopy[routeId].title}</h1>
-      <p class="lead">${pageCopy[routeId].description}</p>
-      <a class="button button--quiet" href="#/">Kembali ke Beranda</a>
-    `;
+  if (routeId === "simulation") {
+    return renderSimulation(simulationState, simulationStartingBalance);
   }
+  if (routeId === "check") {
+    return renderCheck(checkState, { aiEnabled: checkAiEnabled });
+  }
+  if (routeId === "qris") return renderQris(qrisState);
 
-  const copy = pageCopy[routeId];
   return `
-    <p class="eyebrow">Tahap pengembangan</p>
-    <h1 id="page-title" tabindex="-1">${copy.title}</h1>
-    <p class="lead">${copy.description}</p>
-    <div class="simulation-notice-box" role="note">
-      <h2 class="simulation-notice-box__title">Keterangan ketersediaan:</h2>
-      <p class="simulation-notice-box__list">Halaman ini belum aktif dan sengaja tidak menerima input teks atau berkas apa pun dari pengguna. Halaman ini akan dibuka pada tahap rilis berikutnya.</p>
-    </div>
+    <p class="eyebrow">404: Tidak ditemukan</p>
+    <h1 id="page-title" tabindex="-1">${pageCopy[routeId].title}</h1>
+    <p class="lead">${pageCopy[routeId].description}</p>
     <a class="button button--quiet" href="#/">Kembali ke Beranda</a>
   `;
 }
 
 export function mountApp(root: HTMLElement): void {
   let simulationState: SimulationState | null = null;
+  let simulationStartingBalance = initialFictionalBalance;
+  let checkState = createCheckState();
+  let qrisState = createQrisState();
+  let qrisRequestId = 0;
+  let checkAiRequestId = 0;
+  let checkAiAbortController: AbortController | null = null;
+  let selectedSosIncidents: SosIncidentId[] = [];
 
-  const render = (): void => {
+  const checkAiApiBaseUrl = (
+    import.meta.env?.VITE_HAWAS_API_BASE_URL ?? ""
+  )
+    .trim()
+    .replace(/\/$/, "");
+
+  const render = (focusTarget: string | null = null): void => {
     const activeRoute = resolveRoute(window.location.hash);
+    const practiceScenarioId = resolvePracticeScenario(window.location.hash);
+
+    if (activeRoute === "simulation") {
+      if (
+        practiceScenarioId &&
+        (simulationState?.scope.kind !== "practice" ||
+          simulationState.scope.scenarioId !== practiceScenarioId)
+      ) {
+        simulationState = createPracticeSimulationState(
+          practiceScenarioId,
+          simulationStartingBalance,
+        );
+      } else if (
+        !practiceScenarioId &&
+        simulationState?.scope.kind === "practice"
+      ) {
+        simulationState = null;
+      }
+    } else if (simulationState?.scope.kind === "practice") {
+      simulationState = null;
+    }
+
+    if (activeRoute !== "qris" && qrisState.stage !== "idle") {
+      qrisRequestId += 1;
+      qrisState = createQrisState();
+    }
+
+    if (activeRoute !== "check" && checkState.stage !== "idle") {
+      checkAiRequestId += 1;
+      checkAiAbortController?.abort();
+      checkAiAbortController = null;
+      checkState = createCheckState();
+    }
+
     const page = pageCopy[activeRoute];
 
     root.innerHTML = `
@@ -296,14 +514,22 @@ export function mountApp(root: HTMLElement): void {
       <div class="app-shell">
         <header class="site-header">
           <div class="site-header__top">
-            <a class="wordmark" href="#/" aria-label="HAWAS, Beranda Utama">HAWAS</a>
-            <span class="header-caption">Hati-hati dan Awas Bertransaksi</span>
+            <a class="brand-logo-link" href="#/" aria-label="HAWAS, Beranda Utama">
+              <img
+                class="brand-logo"
+                src="/img/hawas-logo.png"
+                alt="HAWAS"
+                width="720"
+                height="240"
+                fetchpriority="high"
+              />
+            </a>
           </div>
           <nav class="site-nav" aria-label="Navigasi menu utama">${renderNavigation(activeRoute)}</nav>
         </header>
         <div class="page-layout">
-          <main id="main-content" class="main-content" tabindex="-1">
-            ${renderPage(activeRoute, simulationState)}
+          <main id="main-content" class="main-content main-content--${activeRoute}" tabindex="-1">
+            ${renderPage(activeRoute, simulationState, simulationStartingBalance, checkState, qrisState, selectedSosIncidents, checkAiApiBaseUrl.length > 0)}
           </main>
         </div>
         <footer class="site-footer">
@@ -314,20 +540,379 @@ export function mountApp(root: HTMLElement): void {
     `;
 
     document.title = `${page.title} | HAWAS`;
-    const heading = root.querySelector<HTMLElement>("#page-title");
-    heading?.focus({ preventScroll: true });
+    if (focusTarget) {
+      root
+        .querySelector<HTMLElement>(focusTarget)
+        ?.focus({ preventScroll: true });
+    }
   };
+
+  root.addEventListener("input", (event) => {
+    if (!(event.target instanceof HTMLTextAreaElement)) return;
+    if (!event.target.matches('textarea[name="checkInput"]')) return;
+
+    const counter = root.querySelector<HTMLElement>("[data-check-count]");
+    if (counter) {
+      counter.textContent = event.target.value.length.toLocaleString("id-ID");
+    }
+    const error = root.querySelector<HTMLElement>("#check-error");
+    if (error) {
+      error.textContent = "";
+      error.hidden = true;
+    }
+  });
+
+  root.addEventListener("change", (event) => {
+    if (!(event.target instanceof HTMLInputElement)) return;
+    if (!event.target.matches('input[name="qrisImage"]')) return;
+    const fileName =
+      event.target.files?.[0]?.name ?? "Belum ada gambar dipilih";
+    const label = root.querySelector<HTMLElement>("[data-qris-file-name]");
+    if (label) label.textContent = fileName;
+  });
+
+  root.addEventListener("submit", (event) => {
+    if (!(event.target instanceof HTMLFormElement)) return;
+    if (event.target.matches("[data-check-form]")) {
+      event.preventDefault();
+      const input = event.target.querySelector<HTMLTextAreaElement>(
+        'textarea[name="checkInput"]',
+      );
+      const error = event.target.querySelector<HTMLElement>("#check-error");
+      if (!input || !error) return;
+
+      const validation = validateCheckInput(input.value);
+      if (!validation.valid) {
+        error.textContent = validation.message;
+        error.hidden = false;
+        error.focus();
+        return;
+      }
+
+      checkState = createCheckResultState(
+        analyzeCheckInput(validation.value),
+        prepareCheckAiInput(validation.value),
+      );
+      input.value = "";
+      render(".check-result");
+      return;
+    }
+
+    if (event.target.matches("[data-qris-upload-form]")) {
+      event.preventDefault();
+      const form = event.target;
+      const fileInput = form.querySelector<HTMLInputElement>(
+        'input[name="qrisImage"]',
+      );
+      const file = fileInput?.files?.[0];
+      if (!file) {
+        qrisState = {
+          stage: "error",
+          code: "missing-file",
+          message: "Pilih satu gambar QRIS untuk diperiksa.",
+        };
+        render(".qris-error");
+        return;
+      }
+
+      const validationError = validateQrisImageFile(file);
+      if (validationError) {
+        qrisState = {
+          stage: "error",
+          code: validationError.code,
+          message: validationError.message,
+        };
+        fileInput.value = "";
+        render(".qris-error");
+        return;
+      }
+
+      qrisState = { stage: "reading" };
+      const requestId = ++qrisRequestId;
+      fileInput.value = "";
+      render(".qris-reading-status");
+
+      void decodeQrisImage(file)
+        .then((result) => {
+          if (
+            requestId !== qrisRequestId ||
+            resolveRoute(window.location.hash) !== "qris"
+          ) {
+            return;
+          }
+          qrisState = createDecodedQrisState(result);
+          render("#qris-result-title");
+        })
+        .catch((error: unknown) => {
+          if (
+            requestId !== qrisRequestId ||
+            resolveRoute(window.location.hash) !== "qris"
+          ) {
+            return;
+          }
+          const domainError =
+            error instanceof QrisDomainError
+              ? error
+              : new QrisDomainError(
+                  "decode-failed",
+                  "Gambar belum dapat diperiksa. Coba gunakan foto lain yang lebih jelas.",
+                );
+          qrisState = {
+            stage: "error",
+            code: domainError.code,
+            message: domainError.message,
+          };
+          render(".qris-error");
+        });
+      return;
+    }
+
+    if (event.target.matches("[data-qris-context-form]")) {
+      event.preventDefault();
+      if (qrisState.stage !== "decoded" && qrisState.stage !== "reviewed") {
+        return;
+      }
+
+      const formData = new FormData(event.target);
+      const source = formData.get("qrisSource");
+      const recipient = formData.get("qrisRecipient");
+      const amount = formData.get("qrisAmount");
+      const pressure = formData.get("qrisPressure");
+      if (
+        !isQrisSource(source) ||
+        !isQrisCheckAnswer(recipient) ||
+        !isQrisCheckAnswer(amount) ||
+        !isQrisPressureAnswer(pressure)
+      ) {
+        return;
+      }
+
+      const answers: QrisContextAnswers = {
+        source,
+        recipient,
+        amount,
+        pressure,
+      };
+      qrisState = createReviewedQrisState(qrisState.result, answers);
+      render(".qris-guidance");
+      return;
+    }
+
+    if (!event.target.matches("[data-simulation-balance-form]")) return;
+
+    event.preventDefault();
+    const error = event.target.querySelector<HTMLElement>(
+      "#simulation-balance-error",
+    );
+    if (!error) return;
+
+    const selectedScenarios = Array.from(
+      event.target.querySelectorAll<HTMLButtonElement>(
+        '[data-simulation-toggle="scenario"][aria-pressed="true"]',
+      ),
+    )
+      .map((button) => button.dataset.scenario ?? "")
+      .filter(isScenarioId);
+    if (selectedScenarios.length === 0) {
+      error.textContent = "Pilih minimal satu simulasi yang ingin Anda coba.";
+      error.hidden = false;
+      event.target
+        .querySelector<HTMLButtonElement>('[data-simulation-toggle="scenario"]')
+        ?.focus();
+      return;
+    }
+
+    const formData = new FormData(event.target);
+    const selectedBalance = formData.get("startingBalance");
+    const validation = validateStartingBalance(
+      typeof selectedBalance === "string" ? selectedBalance : "",
+    );
+    if (!validation.valid) {
+      error.textContent = validation.message;
+      error.hidden = false;
+      event.target
+        .querySelector<HTMLInputElement>('input[name="startingBalance"]')
+        ?.focus();
+      return;
+    }
+
+    error.hidden = true;
+    simulationStartingBalance = validation.value;
+    if (selectedScenarios.length === scenarios.length) {
+      simulationState = createSimulationState(validation.value);
+      render("#page-title");
+      return;
+    }
+
+    simulationState = createSelectedSimulationState(
+      selectedScenarios,
+      validation.value,
+    );
+    render("#page-title");
+  });
 
   root.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
+    const checkAction = event.target.closest<HTMLButtonElement>(
+      "[data-check-action]",
+    );
+    if (checkAction && resolveRoute(window.location.hash) === "check") {
+      if (checkAction.dataset.checkAction === "reset") {
+        checkAiRequestId += 1;
+        checkAiAbortController?.abort();
+        checkAiAbortController = null;
+        checkState = createCheckState();
+        render("#check-input");
+        return;
+      }
+
+      if (
+        checkAction.dataset.checkAction === "request-ai" &&
+        checkState.stage === "result" &&
+        checkAiApiBaseUrl.length > 0 &&
+        checkState.ai.stage !== "loading"
+      ) {
+        const requestId = ++checkAiRequestId;
+        checkAiAbortController?.abort();
+        const controller = new AbortController();
+        checkAiAbortController = controller;
+        const preparedText = checkState.ai.preparedText;
+        checkState = setCheckAiLoading(checkState);
+        render("#check-ai-title");
+
+        void requestCheckAiExplanation(
+          checkAiApiBaseUrl,
+          preparedText,
+          controller.signal,
+        )
+          .then((explanation) => {
+            if (
+              requestId !== checkAiRequestId ||
+              resolveRoute(window.location.hash) !== "check" ||
+              checkState.stage !== "result"
+            ) {
+              return;
+            }
+            checkState = setCheckAiSuccess(checkState, explanation);
+            checkAiAbortController = null;
+            render("#check-ai-title");
+          })
+          .catch((error: unknown) => {
+            if (
+              controller.signal.aborted ||
+              requestId !== checkAiRequestId ||
+              resolveRoute(window.location.hash) !== "check" ||
+              checkState.stage !== "result"
+            ) {
+              return;
+            }
+            checkState = setCheckAiError(
+              checkState,
+              error instanceof Error
+                ? error.message
+                : "Penjelasan AI belum dapat dimuat. Hasil aturan HAWAS tetap tersedia.",
+            );
+            checkAiAbortController = null;
+            render("#check-ai-title");
+          });
+        return;
+      }
+
+      if (checkAction.dataset.checkAction === "clear") {
+        const input = root.querySelector<HTMLTextAreaElement>("#check-input");
+        const counter = root.querySelector<HTMLElement>("[data-check-count]");
+        const error = root.querySelector<HTMLElement>("#check-error");
+        if (input) {
+          input.value = "";
+          input.focus();
+        }
+        if (counter) counter.textContent = "0";
+        if (error) {
+          error.textContent = "";
+          error.hidden = true;
+        }
+        return;
+      }
+    }
+
+    const sosFilter = event.target.closest<HTMLButtonElement>(
+      "[data-sos-filter]",
+    );
+    if (sosFilter && resolveRoute(window.location.hash) === "sos") {
+      const filter = sosFilter.dataset.sosFilter ?? "";
+      if (filter === "all") {
+        selectedSosIncidents = [];
+      } else if (isSosIncidentId(filter)) {
+        selectedSosIncidents = toggleSosIncident(
+          selectedSosIncidents,
+          filter,
+        );
+      } else {
+        return;
+      }
+      render(`[data-sos-filter="${filter}"]`);
+      return;
+    }
+
+    const qrisAction = event.target.closest<HTMLButtonElement>(
+      "[data-qris-action]",
+    );
+    if (qrisAction && resolveRoute(window.location.hash) === "qris") {
+      if (qrisAction.dataset.qrisAction !== "reset") return;
+      qrisRequestId += 1;
+      qrisState = createQrisState();
+      render("#qris-upload-title");
+      return;
+    }
+
+    const toggle = event.target.closest<HTMLButtonElement>(
+      "[data-simulation-toggle]",
+    );
+    if (toggle && resolveRoute(window.location.hash) === "simulation") {
+      const form = toggle.closest<HTMLFormElement>(
+        "[data-simulation-balance-form]",
+      );
+      if (!form) return;
+
+      const scenarioButtons = Array.from(
+        form.querySelectorAll<HTMLButtonElement>(
+          '[data-simulation-toggle="scenario"]',
+        ),
+      );
+      if (toggle.dataset.simulationToggle === "all") {
+        for (const scenarioButton of scenarioButtons) {
+          scenarioButton.setAttribute("aria-pressed", "true");
+        }
+      } else {
+        toggle.setAttribute(
+          "aria-pressed",
+          toggle.getAttribute("aria-pressed") === "true" ? "false" : "true",
+        );
+      }
+
+      const allSelected = scenarioButtons.every(
+        (button) => button.getAttribute("aria-pressed") === "true",
+      );
+      form
+        .querySelector<HTMLButtonElement>('[data-simulation-toggle="all"]')
+        ?.setAttribute("aria-pressed", String(allSelected));
+      const error = form.querySelector<HTMLElement>(
+        "#simulation-balance-error",
+      );
+      if (error) error.hidden = true;
+      return;
+    }
+
     const button = event.target.closest<HTMLButtonElement>(
       "[data-simulation-action]",
     );
     if (!button || resolveRoute(window.location.hash) !== "simulation") return;
 
     const action = button.dataset.simulationAction;
-    if (action === "begin" || action === "restart") {
-      simulationState = createSimulationState();
+    if (action === "change-selection") {
+      simulationState = null;
+    } else if (action === "restart" && simulationState) {
+      simulationState = restartSimulation(simulationState);
     } else if (action === "choose" && simulationState) {
       const safety = button.dataset.safety;
       if (safety !== "safe" && safety !== "risky") return;
@@ -337,16 +922,18 @@ export function mountApp(root: HTMLElement): void {
     } else if (action === "continue" && simulationState) {
       simulationState = continueSimulation(simulationState);
     } else if (action === "exit") {
+      const destination =
+        simulationState?.scope.kind === "practice" ? "#/belajar" : "#/";
       simulationState = null;
-      window.location.hash = "#/";
+      window.location.hash = destination;
       return;
     } else {
       return;
     }
 
-    render();
+    render("#page-title");
   });
 
-  window.addEventListener("hashchange", render);
-  render();
+  window.addEventListener("hashchange", () => render("#page-title"));
+  render("#page-title");
 }

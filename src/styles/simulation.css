@@ -62,41 +62,219 @@
 .simulation-notice-box {
   margin: 1.5rem 0 2rem;
   padding: 1.25rem;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--blue);
-  background: rgb(49 92 140 / 6%);
+  border: 2px solid var(--blue);
+  color: var(--paper);
+  background: var(--blue);
+}
+
+.simulation-notice-box__stamp {
+  margin-bottom: 0.65rem;
+  color: white;
 }
 
 .simulation-notice-box__title {
-  margin: 0 0 0.6rem;
-  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  color: white;
+  font-size: 1.15rem;
   line-height: 1.3;
 }
 
 .simulation-notice-box__list {
   margin: 0;
-  padding-left: 1.2rem;
+  padding: 0;
   display: grid;
-  gap: 0.5rem;
+  list-style: none;
   font-size: 0.95rem;
   line-height: 1.5;
 }
 
-.simulation-intro__balance-preview {
-  margin-block: 1.5rem;
-  padding: 1rem;
-  border: 1px dashed var(--line);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+.simulation-notice-box__list li {
+  padding-block: 0.65rem;
 }
 
-.simulation-intro__balance-caption {
+.simulation-notice-box__list li + li {
+  border-top: 1px solid rgb(255 255 255 / 28%);
+}
+
+.simulation-notice-box__list strong {
+  display: block;
+  margin-bottom: 0.15rem;
+  color: var(--gold-soft);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.simulation-balance-setup {
+  margin-block: 1.5rem;
+  padding: clamp(1rem, 4vw, 1.35rem);
+  border: 1px solid var(--line-interactive);
+  display: grid;
+  gap: 1.25rem;
+}
+
+.simulation-mode-picker {
   margin: 0;
-  font-size: 0.95rem;
+  padding: 0;
+  border: 0;
+}
+
+.simulation-mode-picker legend,
+.simulation-balance-picker legend {
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.simulation-mode-picker > p,
+.simulation-balance-picker > p {
+  margin: 0.3rem 0 0;
   color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.simulation-mode-options {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 1rem;
+  padding: 0.2rem;
+}
+
+.simulation-mode-option {
+  position: relative;
+  width: 100%;
+  height: 64px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--blue-surface);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgb(var(--ink-rgb) / 14%);
+  transition:
+    transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.16s ease-out;
+}
+
+.simulation-mode-option:hover:not([aria-pressed="true"]) {
+  background: var(--blue-surface-strong);
+  box-shadow: 0 12px 24px rgb(var(--ink-rgb) / 18%);
+  transform: translateY(-2px);
+}
+
+.simulation-mode-option[aria-pressed="true"] {
+  color: white;
+  background: var(--blue);
+  box-shadow: 0 10px 22px rgb(var(--blue-rgb) / 28%);
+}
+
+.simulation-mode-option:active {
+  box-shadow: 0 4px 10px rgb(var(--ink-rgb) / 16%);
+  transform: translateY(1px);
+}
+
+.simulation-mode-option:focus-visible {
+  outline: 3px solid rgb(var(--blue-rgb) / 28%);
+  outline-offset: 3px;
+}
+
+.simulation-mode-item {
+  display: grid;
+  grid-template-rows: 64px minmax(2.6rem, auto);
+  align-content: start;
+  gap: 0.55rem;
+}
+
+.simulation-mode-option strong {
+  line-height: 1.35;
+}
+
+.simulation-mode-description {
+  margin: 0;
+  padding-inline: 0.25rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.simulation-mode-option__check {
+  width: 1.8rem;
+  height: 1.8rem;
+  display: none;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--blue);
+  background: var(--surface);
+}
+
+.simulation-mode-option[aria-pressed="true"] .simulation-mode-option__check {
+  display: grid;
+}
+
+.simulation-mode-option__check svg {
+  display: block;
+}
+
+.simulation-balance-picker {
+  margin: 0;
+  padding: 1.1rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+.simulation-balance-options {
+  margin-top: 0.85rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.simulation-balance-option {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line-interactive);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.simulation-balance-option:has(input:checked) {
+  border-color: var(--blue);
+  background: rgb(var(--blue-rgb) / 8%);
+  color: var(--blue);
+}
+
+.simulation-balance-option input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--blue);
+}
+
+.simulation-balance-option span {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.simulation-balance-setup__error {
+  margin: -0.6rem 0 0;
+  color: var(--vermilion-hover);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.simulation-balance-setup > .button {
+  width: fit-content;
+  max-width: 100%;
 }
 
 .simulation-outline,
@@ -138,6 +316,11 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   gap: 0.5rem;
+}
+
+.simulation-progress--practice {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 16rem;
 }
 
 .simulation-progress li {
@@ -200,7 +383,7 @@
   gap: 0.4rem;
   padding: 0.9rem 1rem;
   border-bottom: 1px solid var(--line);
-  background: rgb(23 42 58 / 3%);
+  background: rgb(var(--ink-rgb) / 3%);
 }
 
 .fictional-phone__status,
@@ -231,8 +414,8 @@
   display: grid;
   gap: 0.25rem;
   padding: 0.75rem 0.9rem;
-  border: 1px solid var(--line);
-  background: white;
+  border: 1px solid var(--line-interactive);
+  background: var(--surface);
   overflow-wrap: anywhere;
   font-size: 0.95rem;
   line-height: 1.4;
@@ -248,7 +431,7 @@
 
 .fictional-message--file {
   border-color: var(--vermilion);
-  background: rgb(169 67 44 / 4%);
+  background: rgb(var(--vermilion-rgb) / 4%);
 }
 
 .fictional-message--file .fictional-message__body {
@@ -261,7 +444,7 @@
 /* WhatsApp-like colors are confined to this clearly labeled fictional training mockup. */
 .whatsapp-mockup {
   width: min(100%, 30rem);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-interactive);
   background: var(--paper);
 }
 
@@ -385,8 +568,8 @@
   padding: 0.2rem 0.75rem 1rem;
   background-color: var(--chat-wall);
   background-image:
-    radial-gradient(ellipse at 18% 22%, rgb(23 42 58 / 3%) 0 1px, transparent 2px),
-    radial-gradient(ellipse at 76% 68%, rgb(23 42 58 / 3%) 0 1px, transparent 2px);
+    radial-gradient(ellipse at 18% 22%, rgb(var(--ink-rgb) / 3%) 0 1px, transparent 2px),
+    radial-gradient(ellipse at 76% 68%, rgb(var(--ink-rgb) / 3%) 0 1px, transparent 2px);
   background-size: 30px 34px, 42px 38px;
 }
 
@@ -406,10 +589,10 @@
   max-width: min(90%, 22rem);
   position: relative;
   padding: 0.55rem 0.65rem 0.3rem;
-  border: 1px solid rgb(23 42 58 / 5%);
+  border: 1px solid rgb(var(--ink-rgb) / 5%);
   background: var(--chat-incoming);
   color: #202a30;
-  box-shadow: 0 1px 1px rgb(23 42 58 / 10%);
+  box-shadow: 0 1px 1px rgb(var(--ink-rgb) / 10%);
   overflow-wrap: anywhere;
 }
 
@@ -487,7 +670,7 @@
   padding-inline: 0.8rem;
   border: 1px solid #e0e0e0;
   border-radius: 1.2rem;
-  background: white;
+  background: var(--surface);
   color: #69747a;
   font-size: 0.8rem;
 }
@@ -522,52 +705,23 @@
 }
 
 .simulation-choice {
-  min-height: 5.5rem;
   display: grid;
   gap: 0.6rem;
   padding: 1.15rem 1.25rem;
-  border: 2px solid var(--line);
+  border: 1px solid var(--line-interactive);
   border-radius: 12px;
-  background: white;
+  background: var(--surface);
   color: var(--ink);
   font-family: inherit;
   text-align: left;
-  cursor: pointer;
-  box-shadow: 0 4px 0 #d7d2c7;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.15s ease, background-color 0.15s ease;
-  position: relative;
 }
 
 .simulation-choice--safe {
-  border-left: 8px solid var(--green);
-}
-
-.simulation-choice--safe:hover {
-  border-color: var(--green);
-  box-shadow: 0 6px 0 #2b5544;
-  transform: translateY(-2px);
-  background: #fcfefd;
-}
-
-.simulation-choice--safe:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #2b5544;
+  border-color: rgb(var(--green-rgb) / 45%);
 }
 
 .simulation-choice--risky {
-  border-left: 8px solid var(--vermilion);
-}
-
-.simulation-choice--risky:hover {
-  border-color: var(--vermilion);
-  box-shadow: 0 6px 0 #7d3120;
-  transform: translateY(-2px);
-  background: #fdfcfb;
-}
-
-.simulation-choice--risky:active {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #7d3120;
+  border-color: rgb(var(--vermilion-rgb) / 45%);
 }
 
 .simulation-choice__header {
@@ -589,13 +743,13 @@
 }
 
 .simulation-choice__tag--safe {
-  background: rgb(57 113 91 / 14%);
-  color: #275240;
+  background: rgb(var(--green-rgb) / 14%);
+  color: var(--green-dark);
 }
 
 .simulation-choice__tag--risky {
-  background: rgb(169 67 44 / 14%);
-  color: #8c321d;
+  background: rgb(var(--vermilion-rgb) / 14%);
+  color: var(--vermilion-hover);
 }
 
 .simulation-choice__label {
@@ -603,6 +757,13 @@
   font-weight: 700;
   line-height: 1.4;
   color: var(--ink);
+}
+
+.simulation-choice__description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .simulation-choice__footer {
@@ -613,60 +774,62 @@
 
 .simulation-choice__cta {
   display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
-  padding: 0.45rem 0.9rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
   font-weight: 700;
-  background: rgb(49 92 140 / 10%);
-  color: var(--blue);
-  border: 1px solid rgb(49 92 140 / 25%);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  line-height: 1.3;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
 .simulation-choice--safe .simulation-choice__cta {
-  background: rgb(57 113 91 / 12%);
-  color: var(--green);
-  border-color: rgb(57 113 91 / 30%);
+  background: var(--green);
+  color: white;
+  border-color: var(--green-dark);
 }
 
 .simulation-choice--risky .simulation-choice__cta {
-  background: rgb(169 67 44 / 12%);
-  color: var(--vermilion);
-  border-color: rgb(169 67 44 / 30%);
-}
-
-.simulation-choice:hover .simulation-choice__cta {
-  background: var(--blue);
-  color: white;
-}
-
-.simulation-choice--safe:hover .simulation-choice__cta {
-  background: var(--green);
-  color: white;
-}
-
-.simulation-choice--risky:hover .simulation-choice__cta {
   background: var(--vermilion);
   color: white;
+  border-color: var(--vermilion-dark);
+}
+
+.simulation-choice--safe .simulation-choice__cta:hover {
+  background: var(--green-dark);
+}
+
+.simulation-choice--risky .simulation-choice__cta:hover {
+  background: var(--vermilion-hover);
+}
+
+.simulation-choice__cta:active {
+  transform: translateY(1px);
 }
 
 .simulation-feedback {
-  padding: 1.5rem;
-  border: 1px solid var(--line);
-  border-left: 5px solid var(--blue);
-  background: white;
+  padding: clamp(1rem, 4vw, 1.5rem);
+  border: 1px solid var(--line-interactive);
+  border-radius: 12px;
+  background: var(--surface);
   display: grid;
   gap: 1.25rem;
 }
 
 .simulation-feedback--safe {
-  border-left-color: var(--green);
+  border-color: rgb(var(--green-rgb) / 45%);
 }
 
 .simulation-feedback--risky {
-  border-left-color: var(--vermilion);
+  border-color: rgb(var(--vermilion-rgb) / 45%);
 }
 
 .simulation-feedback__header {
@@ -680,11 +843,6 @@
   line-height: 1.25;
 }
 
-.simulation-feedback__block {
-  display: grid;
-  gap: 0.25rem;
-}
-
 .simulation-feedback__label {
   margin: 0;
   font-family: var(--mono);
@@ -696,38 +854,115 @@
 
 .simulation-feedback__consequence {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.simulation-feedback__visual {
+  margin: 0;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--line-interactive);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
+.simulation-feedback__image-frame {
+  min-width: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #f5ead7;
+}
+
+.simulation-feedback__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.simulation-feedback__visual figcaption {
+  display: grid;
+  align-content: center;
+  gap: 0.45rem;
+  padding: 1rem;
+}
+
+.simulation-feedback__visual-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.simulation-feedback__visual figcaption strong {
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.simulation-feedback__outcome {
+  display: grid;
+  gap: 0.3rem;
+  padding-block: 0.9rem;
+  border-block: 1px solid var(--line);
+}
+
+.simulation-feedback__action {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(var(--blue-rgb) / 35%);
+  background: rgb(var(--blue-rgb) / 6%);
+}
+
+.simulation-feedback__action p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.simulation-feedback__action p:last-child {
+  color: var(--ink);
+  font-size: 1rem;
   font-weight: 700;
 }
 
-.simulation-feedback__text {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.5;
+.simulation-feedback__details {
+  border-top: 1px solid var(--line);
+  color: var(--muted);
 }
 
-.simulation-feedback__block--action {
-  padding: 0.9rem;
-  border-left: 3px solid var(--blue);
-  background: rgb(49 92 140 / 6%);
+.simulation-feedback__details summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  color: var(--blue);
+  font-weight: 700;
+  cursor: pointer;
 }
 
-.simulation-caution-box,
+.simulation-feedback__details summary:focus-visible {
+  outline: 3px solid rgb(var(--blue-rgb) / 28%);
+  outline-offset: 3px;
+}
+
+.simulation-feedback__details p {
+  margin: 0 0 0.75rem;
+  line-height: 1.55;
+}
+
 .simulation-retry-box {
   padding: 0.85rem 1rem;
   font-size: 0.92rem;
   line-height: 1.45;
 }
 
-.simulation-caution-box {
-  border: 1px solid var(--line);
-  background: rgb(23 42 58 / 3%);
-}
-
 .simulation-retry-box {
   border: 1px solid var(--blue);
   color: var(--blue);
-  background: rgb(49 92 140 / 8%);
+  background: rgb(var(--blue-rgb) / 8%);
 }
 
 .simulation-feedback-actions {
@@ -744,8 +979,8 @@
 .simulation-result {
   margin-block: 1.5rem 2rem;
   padding: 1.5rem;
-  border: 1px solid var(--line);
-  background: white;
+  border: 1px solid var(--line-interactive);
+  background: var(--surface);
 }
 
 .simulation-result__label {
@@ -830,6 +1065,20 @@
   }
 }
 
+@media (min-width: 640px) {
+  .simulation-mode-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .simulation-balance-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .simulation-feedback__visual {
+    grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+  }
+}
+
 @media (max-width: 480px) {
   .simulation-progress {
     gap: 0.25rem;
@@ -840,8 +1089,8 @@
     padding: 0.4rem 0.25rem;
   }
 
-  .simulation-progress li .step-number {
-    display: none;
+  .simulation-progress__state {
+    grid-column: 1;
   }
 
   .simulation-progress__title {
@@ -850,58 +1099,34 @@
 }
 
 
-/* ==========================================================================
-   Karakter Pemandu Warga (Pak RT) & Banner Komunikasi
-   ========================================================================== */
+/* Karakter Pemandu Edukasi & Banner Komunikasi */
 
-.mascot-intro-banner,
-.mascot-feedback-banner {
+.mascot-intro-banner {
   display: flex;
   align-items: center;
   gap: 1.25rem;
   margin-bottom: 1.75rem;
   padding: 1rem 1.25rem;
-  border: 1px solid var(--line);
-  background: white;
+  border: 1px solid var(--line-interactive);
+  background: var(--surface);
 }
 
-.mascot-intro-bubble,
-.mascot-feedback-bubble {
+.mascot-intro-bubble {
   flex: 1;
   display: grid;
   gap: 0.25rem;
 }
 
-.mascot-intro-bubble strong,
-.mascot-feedback-bubble strong {
+.mascot-intro-bubble strong {
   font-size: 1.05rem;
   color: var(--ink);
 }
 
-.mascot-intro-bubble p,
-.mascot-feedback-bubble p {
+.mascot-intro-bubble p {
   margin: 0;
   font-size: 0.92rem;
   line-height: 1.45;
   color: var(--muted);
-}
-
-.mascot-feedback-banner--safe {
-  border-left: 4px solid var(--green);
-  background: rgb(57 113 91 / 4%);
-}
-
-.mascot-feedback-banner--safe .mascot-feedback-bubble strong {
-  color: var(--green);
-}
-
-.mascot-feedback-banner--alert {
-  border-left: 4px solid var(--vermilion);
-  background: rgb(169 67 44 / 4%);
-}
-
-.mascot-feedback-banner--alert .mascot-feedback-bubble strong {
-  color: var(--vermilion);
 }
 
 .mascot-svg {
@@ -921,33 +1146,31 @@
 
 .fictional-callout--hazard {
   border: 1px solid var(--vermilion);
-  background: #fff3f0;
-  color: #7d2613;
+  background: var(--vermilion-surface);
+  color: var(--vermilion-dark);
 }
 
 .fictional-callout--warning {
-  border: 1px solid #c97d10;
-  background: #fdf8ee;
-  color: #633e08;
+  border: 1px solid var(--gold);
+  background: var(--gold-surface);
+  color: var(--gold-dark);
 }
 
 .whatsapp-file__icon-wrap {
   flex: 0 0 auto;
 }
 
-/* ==========================================================================
-   Mockup Kamera Pemindai QRIS (Skenario 2)
-   ========================================================================== */
+/* Mockup Kamera Pemindai QRIS (Skenario 2) */
 
 .qris-mockup {
   width: min(100%, 30rem);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-interactive);
   background: var(--paper);
 }
 
 .qris-screen {
   padding: 0 0 1.25rem;
-  background: #fdfbf7;
+  background: var(--surface-hover);
 }
 
 .qris-statusbar {
@@ -966,8 +1189,8 @@
 .qris-physical-sign {
   margin: 1rem 1rem 0.75rem;
   padding: 0.75rem 1rem;
-  border: 2px dashed #b8860b;
-  background: #fffdf5;
+  border: 2px dashed var(--gold);
+  background: var(--gold-surface);
   text-align: center;
 }
 
@@ -976,7 +1199,7 @@
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  color: #855b00;
+  color: var(--gold-dark);
   letter-spacing: 0.05em;
   margin-bottom: 0.2rem;
 }
@@ -991,7 +1214,7 @@
   justify-items: center;
   gap: 0.5rem;
   padding: 1rem;
-  background: #f0ede4;
+  background: var(--blue-surface);
   border-block: 1px solid var(--line);
 }
 
@@ -1011,8 +1234,8 @@
 .qris-confirmation-card {
   margin: 1rem 1rem 0.5rem;
   padding: 0.85rem 1rem;
-  border: 1px solid var(--line);
-  background: white;
+  border: 1px solid var(--line-interactive);
+  background: var(--surface);
   display: grid;
   gap: 0.6rem;
 }
@@ -1027,7 +1250,7 @@
 .qris-confirmation-row--highlight {
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--vermilion);
-  background: rgb(169 67 44 / 5%);
+  background: rgb(var(--vermilion-rgb) / 5%);
 }
 
 .qris-confirmation-label {
@@ -1049,15 +1272,13 @@
   margin: 0.75rem 1rem 0;
 }
 
-/* ==========================================================================
-   Mockup Layar Panggilan Masuk (Skenario 3)
-   ========================================================================== */
+/* Mockup Layar Panggilan Masuk (Skenario 3) */
 
 .call-mockup {
   width: min(100%, 30rem);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-interactive);
   background: #111a24;
-  color: #f7f4ec;
+  color: var(--paper);
 }
 
 .call-mockup .fictional-phone__header {
@@ -1101,14 +1322,14 @@
   display: grid;
   place-items: center;
   margin-bottom: 0.4rem;
-  animation: phone-ring 1.8s infinite;
+  animation: phone-ring 1.8s 5;
 }
 
 .call-status-badge {
   display: inline-block;
   padding: 0.15rem 0.5rem;
   border-radius: 1rem;
-  background: rgb(169 67 44 / 30%);
+  background: rgb(var(--vermilion-rgb) / 30%);
   color: #ff9d85;
   font-size: 0.72rem;
   font-weight: 600;
@@ -1188,24 +1409,22 @@
   background: var(--green);
 }
 
-/* ==========================================================================
-   Animasi Mikro & Stamp Penilaian
-   ========================================================================== */
+/* Animasi Mikro & Stamp Penilaian */
 
 .simulation-stamp--animated {
-  animation: stamp-press 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: stamp-press 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .simulation-stamp--safe {
   color: var(--green);
   border-color: var(--green);
-  background: rgb(57 113 91 / 10%);
+  background: rgb(var(--green-rgb) / 10%);
 }
 
 .simulation-stamp--risky {
   color: var(--vermilion);
   border-color: var(--vermilion);
-  background: rgb(169 67 44 / 10%);
+  background: rgb(var(--vermilion-rgb) / 10%);
 }
 
 @keyframes stamp-press {
@@ -1240,12 +1459,19 @@
     animation: none !important;
     transform: none !important;
   }
+
+  .simulation-mode-option {
+    transition: none;
+  }
+
+  .simulation-mode-option:hover,
+  .simulation-mode-option:active {
+    transform: none;
+  }
 }
 
 
-/* ==========================================================================
-   Ilustrasi Karakter Bitmap (Gambar Orang Nyata, Bukan Anime)
-   ========================================================================== */
+/* Ilustrasi Karakter Bitmap (Gambar Orang Nyata, Bukan Anime) */
 
 .mascot-img {
   flex: 0 0 90px;
@@ -1261,7 +1487,7 @@
   max-width: 100%;
   height: auto;
   border-radius: 6px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-interactive);
 }
 
 .scenario-img--wide {
@@ -1275,7 +1501,7 @@
   padding: 0.85rem;
   margin-top: 0.75rem;
   border: 1px dashed var(--line);
-  background: rgb(49 92 140 / 3%);
+  background: rgb(var(--blue-rgb) / 3%);
 }
 
 .scenario-illustration-hint--wide .scenario-img {

@@ -1,0 +1,71 @@
+name: Deploy backend HAWAS
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: hawas-production-backend
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      REGION: ${{ vars.GCP_REGION }}
+      REPOSITORY: hawas-backend
+      SERVICE: hawas-ai-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Build dan push image
+        shell: bash
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/${SERVICE}:${GITHUB_SHA}"
+          docker build --tag "${IMAGE}" .
+          docker push "${IMAGE}"
+          IMAGE_DIGEST="$(docker inspect --format='{{index .RepoDigests 0}}' "${IMAGE}")"
+          echo "IMAGE=${IMAGE_DIGEST}" >> "${GITHUB_ENV}"
+
+      - name: Terapkan infrastruktur
+        shell: bash
+        working-directory: infra/terraform
+        env:
+          TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+          TF_VAR_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT }}
+          TF_VAR_api_domain: ${{ vars.HAWAS_API_DOMAIN }}
+          TF_VAR_frontend_origin: ${{ vars.HAWAS_FRONTEND_ORIGIN }}
+          TF_VAR_github_repository: ${{ github.repository }}
+          TF_VAR_budget_currency_code: ${{ vars.GCP_BUDGET_CURRENCY || 'USD' }}
+        run: |
+          export TF_VAR_container_image="${IMAGE}"
+          terraform init -backend-config="bucket=${{ vars.GCP_TERRAFORM_STATE_BUCKET }}" -backend-config="prefix=hawas/production"
+          terraform fmt -check -recursive
+          terraform validate
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan

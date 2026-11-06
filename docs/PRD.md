@@ -27,7 +27,7 @@ Rancang untuk ponsel, bahasa Indonesia yang lugas, pengguna dengan tingkat liter
 - Mengakses rekening, membayar, memblokir transaksi, atau mengirim laporan atas nama pengguna.
 - Menjamin transaksi dibatalkan atau dana dapat dikembalikan.
 - Menggantikan arahan bank, penyedia jasa pembayaran, aparat, BI, atau OJK.
-- Menjadi antivirus, pemeriksa reputasi nomor/domain, atau layanan analisis berbasis AI.
+- Menjadi antivirus, pemeriksa reputasi nomor/domain, atau layanan yang menyerahkan keputusan keamanan kepada AI.
 
 ## Prinsip produk
 
@@ -46,7 +46,7 @@ Enam tujuan utama:
 1. **Beranda** — pengenalan singkat dan akses ke Simulasi serta SOS.
 2. **Simulasi** — tiga skenario berurutan dan ringkasan hasil.
 3. **Cek** — petunjuk pola pada teks atau URL yang ditempel.
-4. **QRIS** — pemindaian/unggah QR dan perbandingan nama merchant.
+4. **QRIS** — pemindaian atau unggah QR dan penyajian nama penerima untuk diverifikasi kepada kasir.
 5. **SOS** — langkah darurat, daftar bukti, dan kanal yang relevan.
 6. **Belajar** — tiga pengingat “3 Jangan”.
 
@@ -58,19 +58,20 @@ SOS harus mudah dijangkau dari setiap layar utama. Cek dan QRIS yang belum berfu
 
 - Beranda responsif.
 - Simulasi tiga skenario, umpan balik, skor sesi, dan hasil akhir.
+- Cek pola pesan dan URL melalui aturan lokal yang transparan.
 - Panduan SOS dengan tanggal pemeriksaan konten.
 - Kartu Belajar “3 Jangan”.
 - Tidak ada akun, server aplikasi, analitik, atau penyimpanan progres.
 
 ### Tahap lanjutan
 
-- Cek teks/URL secara lokal dengan aturan transparan dan batas input.
-- QRIS melalui kamera atau unggah gambar, pembacaan payload, pemeriksaan CRC bila didukung, dan perbandingan nama merchant.
+- QRIS melalui unggah gambar, pembacaan payload, pemeriksaan CRC, penyajian data penerima, dan checklist konteks sebelum bayar. Dukungan kamera tetap tahap berikutnya.
+- Penjelasan AI opsional untuk Cek setelah hasil aturan lokal tersedia. Pengguna harus menyetujui pengiriman teks yang sudah disamarkan. AI tidak boleh mengganti hasil aturan atau memberi vonis aman dan penipuan.
 - Uji keterpahaman dengan calon pengguna sebelum memperluas rilis.
 
 ### Di luar cakupan
 
-- Login, sinkronisasi cloud, laporan otomatis, pembayaran nyata, akses rekening, basis data reputasi, API analisis eksternal, dan klasifikasi AI.
+- Login, sinkronisasi cloud, laporan otomatis, pembayaran nyata, akses rekening, basis data reputasi, pembukaan URL eksternal, dan klasifikasi AI sebagai penentu keputusan.
 
 ## Persyaratan fungsional
 
@@ -105,17 +106,27 @@ SOS harus mudah dijangkau dari setiap layar utama. Cek dan QRIS yang belum berfu
 - **CHECK-04:** Hasil menunjukkan pola, alasan, dan langkah praktis, bukan vonis.
 - **CHECK-05:** Hasil tanpa pola menyebut bahwa tidak ditemukannya pola bukan jaminan aman.
 - **CHECK-06:** Input tidak disimpan secara default. Klaim pemrosesan lokal dan tidak adanya pengiriman harus diverifikasi secara teknis.
+- **CHECK-07:** Tolak pemeriksaan bila input menyerupai OTP, PIN, kata sandi, atau nomor kartu. Pesan kesalahan tidak boleh mengulang nilai yang terdeteksi.
+- **CHECK-08:** State hasil hanya menyimpan sinyal dan kutipan yang telah disamarkan. Input mentah dikosongkan setelah pemeriksaan berhasil.
+- **CHECK-09:** URL diperlakukan sebagai teks. HAWAS tidak membuka URL, mengambil konten, atau menyediakan tautan aktif dari hasil pemeriksaan.
+- **CHECK-10:** Hasil aturan lokal harus tersedia tanpa backend dan ditampilkan sebelum penjelasan AI ditawarkan.
+- **CHECK-11:** Penjelasan AI hanya diminta setelah tindakan eksplisit pengguna. Sebelum mengirim, jelaskan bahwa teks samaran akan diproses melalui Google Cloud dan penyamaran otomatis tidak menjamin seluruh data pribadi terhapus.
+- **CHECK-12:** Backend mengulang validasi, penyamaran, dan rules HAWAS. AI tidak boleh menghapus temuan rules, membuat tindakan baru, memberi skor risiko, membuka URL, atau memberi vonis pasti.
+- **CHECK-13:** Kegagalan, timeout, rate limit, atau respons AI yang tidak valid harus mempertahankan hasil rules lokal dan menyediakan pemulihan yang jelas.
 
 ### QRIS
 
 - **QR-01:** Berikan pilihan kamera dan unggah gambar, dengan penjelasan sebelum meminta izin kamera.
 - **QR-02:** Kamera ditolak/tidak tersedia menyediakan jalur unggah atau panduan manual.
 - **QR-03:** Tampilkan hanya data yang benar-benar terbaca; jangan menebak data yang hilang.
-- **QR-04:** Bandingkan nama merchant dengan nama toko yang diharapkan dan tampilkan “Nama sesuai”, “Nama berbeda — verifikasi dahulu”, atau “Informasi belum cukup”.
+- **QR-04:** Tampilkan nama penerima yang benar-benar terbaca dan arahkan pengguna untuk memverifikasinya kepada kasir. Jika nama tidak terbaca, tampilkan “Informasi belum cukup”.
 - **QR-05:** Nama atau CRC tidak menjadi dasar untuk menyatakan merchant pasti aman atau penipu.
 - **QR-06:** Jika ditampilkan, CRC dijelaskan sebagai pemeriksaan konsistensi data QR, bukan keaslian merchant atau keamanan pembayaran.
 - **QR-07:** Gambar dan payload tidak diunggah atau disimpan setelah implementasi lokal diverifikasi.
 - **QR-08:** QR rusak, tak terbaca, atau berformat tak didukung memberi pesan dan pilihan mencoba lagi.
+- **QR-09:** Setelah QRIS terbaca, pengguna dapat memeriksa asal QR, kecocokan nama, nominal, dan adanya desakan sebelum membayar.
+- **QR-10:** Hasil checklist memakai tingkat “berhenti sementara”, “periksa lagi”, atau “pemeriksaan awal selesai”. Hasil tidak boleh memakai vonis pasti aman atau penipuan.
+- **QR-11:** Jawaban checklist hanya hidup di memori route dan dihapus saat pemeriksaan direset atau pengguna meninggalkan halaman QRIS.
 
 ### SOS dan Belajar
 
@@ -133,7 +144,7 @@ SOS harus mudah dijangkau dari setiap layar utama. Cek dan QRIS yang belum berfu
 - **Gerak:** hormati `prefers-reduced-motion`; animasi bukan satu-satunya media umpan balik.
 - **Responsif:** ponsel menjadi prioritas; desktop memakai kolom baca yang terukur, bukan memperlebar konten.
 - **Performa:** aset ringan; SOS dan simulasi tidak bergantung pada aset besar atau layanan pihak ketiga.
-- **Privasi:** tanpa akun dan tanpa penyimpanan input sensitif. Jangan tambahkan analitik tanpa keputusan privasi terpisah.
+- **Privasi:** tanpa akun dan tanpa penyimpanan input sensitif. Penjelasan AI opsional hanya menerima teks samaran setelah persetujuan. Jangan tambahkan analitik tanpa keputusan privasi terpisah.
 - **Bahasa:** bahasa Indonesia yang singkat, spesifik, tidak menghakimi, dan tidak alarmistis.
 
 ## Pengukuran

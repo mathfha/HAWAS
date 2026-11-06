@@ -26,20 +26,23 @@
 
 ## 3. Palet Warna dan Kontras (WCAG AA Terverifikasi)
 
-Warna diambil dari materi cetak arsip sipil dan rambu kehati-hatian. Dilarang menambahkan warna baru di luar sistem ini tanpa alasan tertulis.
+Palet menggabungkan ketenangan biru materi edukasi keuangan publik dengan warna Benang Bintik Kalimantan Tengah. Biru dan navy mendominasi antarmuka. Merah, hijau, kuning emas, hitam, dan putih menjadi aksen fungsional yang terukur. Dilarang menambahkan warna baru di luar sistem ini tanpa alasan tertulis.
 
 | Token | Hex | Rasio Kontras pada `--paper` | Fungsi dan Tujuan |
 |---|---|---|---|
-| `--paper` | `#f7f4ec` | Dasar (Latar) | Latar belakang hangat bertema kertas arsip, mengurangi silau layar. |
-| `--ink` | `#172a3a` | 13.37:1 (Pass AA/AAA) | Teks utama, judul, elemen struktural penting. |
-| `--muted` | `#52616b` | 5.82:1 (Pass AA) | Teks pendukung, keterangan waktu, label non-kritis. |
-| `--blue` | `#315c8c` | 6.28:1 (Pass AA) | Aksen utama navigasi aktif, tautan rujukan, tombol primer (kontras putih 6.91:1). |
-| `--vermilion` | `#a9432c` | 5.42:1 (Pass AA) | Aksen darurat (SOS), peringatan risiko transaksi, penanda skenario bahaya. |
-| `--green` | `#39715b` | 5.10:1 (Pass AA) | Penanda opsi aman atau langkah verifikasi tervalidasi. |
-| `--line` | `#d7d2c7` | 1.34:1 (Non-teks) | Garis pembatas bidang datar (flat rule border), tebal 1px padat. |
+| `--paper` | `#f6f4ec` | Dasar (Latar) | Latar kertas hangat yang mengurangi silau. |
+| `--ink` | `#0d2a43` | 13.34:1 (Pass AA/AAA) | Navy utama untuk teks dan struktur. |
+| `--muted` | `#506273` | 5.72:1 (Pass AA) | Teks pendukung dan keterangan. |
+| `--blue` | `#0a5f91` | 6.23:1 (Pass AA) | Warna dominan navigasi, tautan, dan tombol primer. |
+| `--teal` | `#007873` | 4.85:1 (Pass AA) | Aksen biru-hijau untuk detail pendukung. |
+| `--vermilion` | `#a83b2b` | 5.73:1 (Pass AA) | Merah Kalteng untuk SOS dan risiko. |
+| `--green` | `#2f6b46` | 5.76:1 (Pass AA) | Hijau Kalteng untuk tindakan aman. |
+| `--gold` | `#c69318` | 2.51:1 (Nonteks) | Kuning emas Kalteng untuk garis dan aksen dekoratif, bukan teks kecil. |
+| `--line` | `#d1d5d2` | Nonteks | Garis pembatas bidang datar. |
 
 Aturan warna:
-- Maksimal 1 warna aksen dominan per tampilan (Biru untuk alur normal, Vermilion untuk SOS).
+- Biru atau navy tetap menjadi warna dominan. Merah, hijau, dan emas dipakai sesuai fungsi, bukan sebagai dekorasi acak.
+- Emas tidak digunakan untuk teks kecil karena kontrasnya tidak mencukupi.
 - Dilarang memakai gradient glow, drop shadow besar mengambang, atau efek kaca (glassmorphism).
 
 ---
@@ -92,6 +95,6 @@ Aturan warna:
 
 ## 7. Status Komponen dan Fitur
 
-- Fitur yang belum siap (Cek, QRIS) wajib ditandai "Tahap pengembangan" atau "Belum tersedia".
+- Fitur yang belum siap wajib ditandai "Tahap pengembangan" atau "Belum tersedia".
 - Dilarang menampilkan form input palsu yang menerima masukan seolah berfungsi.
 - Tombol aksi harus memiliki handler nyata atau tautan hash aktif (`href="#/..."`).

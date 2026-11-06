@@ -7,6 +7,7 @@ Platform edukasi publik berbasis web untuk melatih kewaspadaan dan mengambil kep
 1. **Latihan Simulasi Transaksi**: Tiga contoh skenario praktis (berkas APK kurir, verifikasi nama penerima QRIS, dan panggilan telepon meminta OTP) menggunakan saldo dan data tiruan.
 2. **Panduan Darurat (SOS)**: Urutan langkah penyelamatan cepat saat mengalami kendala atau penipuan, dilengkapi kontak resmi instansi berwenang (IASC OJK dan BI BICARA 131).
 3. **Panduan Belajar**: Tiga kebiasaan mendasar agar terhindar dari modus kejahatan transaksi digital.
+4. **Cek Pola Pesan**: Rules lokal yang transparan dengan penjelasan AI opsional melalui backend HAWAS.
 
 ## Batasan Produk
 
@@ -24,6 +25,9 @@ npm install
 
 # Jalankan server pengembangan
 npm run dev
+
+# Jalankan backend AI lokal setelah menyiapkan Application Default Credentials
+npm run dev:api
 
 # Jalankan pengujian unit
 npm test

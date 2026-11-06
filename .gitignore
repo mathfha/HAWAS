@@ -4,16 +4,23 @@ node_modules/
 # Production build
 dist/
 build/
+dist-server/
+.terraform/
+*.tfstate
+*.tfstate.*
+tfplan
 
 # Environment and sensitive keys
 .env
 .env.*
 *.env
 *.local
+!.env.example
 
 # IDE, editor, and AI assistant configs
 .vscode/
 .idea/
+.impeccable/hook.cache.json
 .gemini/
 .claude/
 .antigravity/

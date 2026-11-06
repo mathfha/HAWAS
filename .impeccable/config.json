@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "codex-grid-background",
+        "value": "*",
+        "files": [
+          "src/styles/simulation.css"
+        ],
+        "createdAt": "2026-11-06T05:09:40.315Z",
+        "reason": "Domain-appropriate, low-contrast dot texture inside the fictional chat simulation, not a decorative page grid."
+      }
+    ]
+  }
+}

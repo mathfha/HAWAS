@@ -1,0 +1,11 @@
+.git
+.github
+.impeccable
+anti-slop
+dist
+dist-server
+node_modules
+public
+tests
+*.log
+.env*

@@ -2,17 +2,23 @@ export const scenarios = [
   {
     id: "courier-apk",
     title: "Pesan kurir mengirim berkas aplikasi (.APK)",
-    context: "Anda menerima pesan chat dari nomor tak dikenal yang mengaku sebagai kurir pengantar paket.",
+    context: "Dalam contoh fiktif ini, Anda menerima pesan chat dari nomor tak dikenal yang mengaku sebagai kurir pengantar paket.",
     messages: [
-      { sender: "Pengirim pesan", text: "Paket Anda tertahan di gudang. Silakan buka foto tanda terima paket di bawah ini:" },
-      { sender: "Lampiran pesan", text: "Foto_Paket.apk (Berkas aplikasi Android, bukan berkas foto)", kind: "file" },
+      { sender: "Pengirim fiktif", text: "Paket Anda tertahan di gudang. Silakan buka foto tanda terima paket di bawah ini:" },
+      { sender: "Lampiran pesan fiktif", text: "Foto_Paket.apk (Berkas aplikasi Android, bukan berkas foto)", kind: "file" },
     ],
     prompt: "Apa tindakan terbaik yang Anda ambil?",
     balanceLoss: 300_000,
     choices: [
       {
         id: "download",
-        label: "Pasang aplikasi dari pesan tersebut",
+        label: "Unduh APK",
+        description:
+          "Membuka berkas aplikasi yang dikirim oleh nomor tak dikenal.",
+        feedbackImpact:
+          "Aplikasi asing dapat membaca SMS dan data pribadi di ponsel.",
+        feedbackAction:
+          "Jangan buka APK dari chat. Periksa paket lewat aplikasi resmi.",
         safety: "risky",
         consequence: "Dalam simulasi ini, saldo latihan Anda berkurang Rp300.000.",
         reason:
@@ -22,7 +28,13 @@ export const scenarios = [
       },
       {
         id: "decline",
-        label: "Abaikan dan jangan pasang berkas",
+        label: "Tolak & blokir",
+        description:
+          "Menghentikan interaksi dan tidak membuka berkas yang dikirim.",
+        feedbackImpact:
+          "Berkas tidak dibuka, sehingga data dan saldo latihan tetap terlindungi.",
+        feedbackAction:
+          "Periksa nomor resi lewat aplikasi belanja atau situs kurir resmi.",
         safety: "safe",
         consequence: "Saldo latihan Anda tetap aman (tidak ada saldo yang berkurang).",
         reason:
@@ -35,17 +47,23 @@ export const scenarios = [
   {
     id: "merchant-name",
     title: "Periksa nama penerima saat bayar kode QR (QRIS)",
-    context: "Anda sedang berbelanja di warung 'Kopi Berkah' dan hendak membayar dengan memindai kode QR (QRIS).",
+    context: "Dalam contoh fiktif ini, Anda sedang berbelanja di warung 'Kopi Berkah' dan hendak membayar dengan memindai kode QR (QRIS).",
     messages: [
-      { sender: "Nama toko fisik", text: "Kopi Berkah" },
-      { sender: "Nama penerima di layar QRIS", text: "Resto Sukses Pribadi" },
+      { sender: "Nama toko fiktif", text: "Kopi Berkah" },
+      { sender: "Nama penerima fiktif di layar QRIS", text: "Resto Sukses Pribadi" },
     ],
     prompt: "Nama penerima pada layar ponsel berbeda dari nama toko. Apa yang Anda lakukan?",
     balanceLoss: 25_000,
     choices: [
       {
         id: "pay",
-        label: "Langsung bayar tanpa bertanya",
+        label: "Langsung bayar",
+        description:
+          "Melanjutkan pembayaran saat nama penerima berbeda dari nama toko.",
+        feedbackImpact:
+          "Saldo latihan dapat terkirim ke nama penerima yang belum Anda kenali.",
+        feedbackAction:
+          "Hentikan pembayaran dan tanyakan nama penerima kepada kasir.",
         safety: "risky",
         consequence: "Dalam simulasi ini, saldo latihan Anda berkurang Rp25.000.",
         reason:
@@ -55,7 +73,13 @@ export const scenarios = [
       },
       {
         id: "ask",
-        label: "Tanyakan ke kasir sebelum membayar",
+        label: "Tanya kasir",
+        description:
+          "Memastikan nama penerima kepada kasir sebelum melanjutkan pembayaran.",
+        feedbackImpact:
+          "Anda memastikan tujuan pembayaran sebelum saldo latihan dikirim.",
+        feedbackAction:
+          "Bayar hanya setelah kasir mengonfirmasi nama penerimanya.",
         safety: "safe",
         consequence: "Saldo latihan Anda tetap aman (tidak ada saldo yang berkurang).",
         reason:
@@ -68,17 +92,23 @@ export const scenarios = [
   {
     id: "otp-call",
     title: "Panggilan telepon meminta kode rahasia (OTP)",
-    context: "Ponsel Anda berdering dari nomor yang mengaku sebagai 'Pusat Bantuan Bank'.",
+    context: "Dalam contoh fiktif ini, ponsel Anda berdering dari nomor yang mengaku sebagai 'Pusat Bantuan Bank'.",
     messages: [
-      { sender: "Penelepon", text: "Akun perbankan Anda sedang disusupi orang lain dan harus segera diamankan." },
-      { sender: "Penelepon", text: "Kami baru saja mengirimkan 6 angka kode SMS (OTP). Tolong sebutkan kodenya sekarang agar kami bisa membantu." },
+      { sender: "Penelepon fiktif", text: "Akun perbankan Anda sedang disusupi orang lain dan harus segera diamankan." },
+      { sender: "Penelepon fiktif", text: "Kami baru saja mengirimkan 6 angka kode SMS (OTP). Tolong sebutkan kodenya sekarang agar kami bisa membantu." },
     ],
     prompt: "Penelepon mendesak Anda memberikan kode SMS tersebut. Apa yang Anda lakukan?",
     balanceLoss: 5_000_000,
     choices: [
       {
         id: "share-otp",
-        label: "Sebutkan kode rahasia tersebut kepada penelepon",
+        label: "Kirim OTP",
+        description:
+          "Memberikan kode rahasia sekali pakai kepada penelepon.",
+        feedbackImpact:
+          "Kode OTP dapat dipakai untuk masuk atau menyetujui transaksi.",
+        feedbackAction:
+          "Tutup telepon. Jangan bagikan OTP, PIN, atau kata sandi.",
         safety: "risky",
         consequence: "Dalam simulasi ini, saldo latihan Anda berkurang Rp5.000.000.",
         reason:
@@ -88,7 +118,13 @@ export const scenarios = [
       },
       {
         id: "hang-up",
-        label: "Tutup telepon dan jangan berikan kode apa pun",
+        label: "Tutup telepon",
+        description:
+          "Mengakhiri panggilan tanpa memberikan kode rahasia.",
+        feedbackImpact:
+          "Kode rahasia tetap tersimpan dan tidak diberikan kepada penelepon.",
+        feedbackAction:
+          "Jika khawatir, hubungi bank melalui nomor resmi yang Anda cari sendiri.",
         safety: "safe",
         consequence: "Saldo latihan Anda tetap aman (tidak ada saldo yang berkurang).",
         reason:
@@ -101,5 +137,6 @@ export const scenarios = [
 ] as const;
 
 export type Scenario = (typeof scenarios)[number];
+export type ScenarioId = Scenario["id"];
 export type ScenarioChoice = Scenario["choices"][number];
 export type ChoiceSafety = ScenarioChoice["safety"];

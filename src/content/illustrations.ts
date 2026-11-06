@@ -8,14 +8,14 @@
 
 export const mascotIllustrations = {
   /**
-   * Karakter Pak RT: Mode Siaga / Waspada.
+   * Karakter Pemandu Edukasi: Mode Siaga / Waspada.
    * Gestur telapak tangan terbuka "Tunggu sebentar, periksa dahulu!".
    */
   alert: `
     <img
       class="mascot-img mascot-img--alert"
       src="/img/pak-rt-waspada.jpg"
-      alt="Pak RT mengangkat telapak tangan, meminta Anda berhenti dan memeriksa dahulu"
+      alt="Pemandu edukasi mengangkat telapak tangan, meminta Anda berhenti dan memeriksa dahulu"
       width="120"
       height="120"
       loading="lazy"
@@ -23,14 +23,14 @@ export const mascotIllustrations = {
   `,
 
   /**
-   * Karakter Pak RT: Mode Aman / Lega.
+   * Karakter Pemandu Edukasi: Mode Aman / Lega.
    * Tersenyum ramah dan mengacungkan jempol tenang.
    */
   safe: `
     <img
       class="mascot-img mascot-img--safe"
       src="/img/pak-rt-aman.jpg"
-      alt="Pak RT tersenyum dan mengacungkan jempol, tanda pilihan Anda sudah tepat"
+      alt="Pemandu edukasi tersenyum dan mengacungkan jempol, tanda pilihan Anda sudah tepat"
       width="120"
       height="120"
       loading="lazy"
@@ -38,14 +38,14 @@ export const mascotIllustrations = {
   `,
 
   /**
-   * Karakter Pak RT: Mode Beranda / Pengenalan.
-   * Menyapa ramah memegang papan informasi saku.
+   * Karakter Pemandu Edukasi: Mode Beranda / Pengenalan.
+   * Menyapa ramah memegang buku panduan transaksi aman.
    */
   intro: `
     <img
       class="mascot-img mascot-img--intro"
       src="/img/pak-rt-aman.jpg"
-      alt="Pak RT menyapa ramah dan memegang buku panduan warga"
+      alt="Pemandu edukasi menyapa ramah dan memegang buku panduan transaksi aman"
       width="120"
       height="120"
       loading="lazy"
@@ -96,6 +96,81 @@ export const scenarioImages = {
     />
   `,
 };
+
+export const feedbackIllustrations = {
+  "courier-apk": {
+    risky: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-apk-risky.webp"
+        alt="Ilustrasi fiktif seseorang membuka berkas APK dan ponsel menunjukkan data serta saldo latihan berisiko"
+        width="900"
+        height="600"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+    safe: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-apk-safe.webp"
+        alt="Ilustrasi fiktif seseorang menolak berkas APK lalu memeriksa paket melalui aplikasi resmi"
+        width="897"
+        height="600"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+  },
+  "merchant-name": {
+    risky: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-qris-risky.webp"
+        alt="Ilustrasi fiktif pelanggan melanjutkan pembayaran sebelum memastikan nama penerima"
+        width="900"
+        height="554"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+    safe: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-qris-safe.webp"
+        alt="Ilustrasi fiktif pelanggan memastikan nama penerima pembayaran kepada kasir"
+        width="898"
+        height="554"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+  },
+  "otp-call": {
+    risky: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-otp-risky.webp"
+        alt="Ilustrasi fiktif seseorang memberikan kode rahasia melalui telepon dan akun latihan menjadi berisiko"
+        width="900"
+        height="590"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+    safe: `
+      <img
+        class="simulation-feedback__image"
+        src="/img/feedback-otp-safe.webp"
+        alt="Ilustrasi fiktif seseorang menutup panggilan lalu menghubungi bank melalui kanal resmi"
+        width="900"
+        height="592"
+        loading="lazy"
+        decoding="async"
+      />
+    `,
+  },
+} as const;
 
 export const scenarioVisuals = {
   /**
